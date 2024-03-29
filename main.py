@@ -2,8 +2,10 @@ import numpy as np
 import cv2
 from flask import Flask, Response
 import sys
+from flask_cors import CORS 
 
 app = Flask(__name__)
+CORS(app, resources={r"/video_feed": {"origins": "http://localhost:3000"}})
 
 # Helper Methods
 def buildGauss(frame, levels):
@@ -36,14 +38,14 @@ webcam.set(3, realWidth)
 webcam.set(4, realHeight)
 
 # Output Videos
+originalVideoWriter = None
+outputVideoWriter = None
 if len(sys.argv) != 2:
     originalVideoFilename = "original.mov"
-    originalVideoWriter = cv2.VideoWriter()
-    originalVideoWriter.open(originalVideoFilename, cv2.VideoWriter_fourcc('j', 'p', 'e', 'g'), videoFrameRate, (realWidth, realHeight), True)
+    originalVideoWriter = cv2.VideoWriter(originalVideoFilename, cv2.VideoWriter_fourcc('M','J','P','G'), videoFrameRate, (realWidth, realHeight), True)
 
 outputVideoFilename = "output.mov"
-outputVideoWriter = cv2.VideoWriter()
-outputVideoWriter.open(outputVideoFilename, cv2.VideoWriter_fourcc('j', 'p', 'e', 'g'), videoFrameRate, (realWidth, realHeight), True)
+outputVideoWriter = cv2.VideoWriter(outputVideoFilename, cv2.VideoWriter_fourcc('M','J','P','G'), videoFrameRate, (realWidth, realHeight), True)
 
 # Color Magnification Parameters
 levels = 3
@@ -88,7 +90,7 @@ def video_feed():
             if not ret:
                 break
 
-            if len(sys.argv) != 2:
+            if originalVideoWriter:
                 originalFrame = frame.copy()
                 originalVideoWriter.write(originalFrame)
 
@@ -131,13 +133,10 @@ def video_feed():
             else:
                 cv2.putText(frame, "Calculating BPM...", loadingTextLocation, font, fontScale, fontColor, lineType)
 
-            outputVideoWriter.write(frame)
-
-            # if len(sys.argv) != 2:
-            #     cv2.imshow("Webcam Heart Rate Monitor", frame)
-
-            #     if cv2.waitKey(1) & 0xFF == ord('q'):
-            #         break
+            try:
+                outputVideoWriter.write(frame)
+            except cv2.error as e:
+                print("Error writing frame to video:", e)
 
             ret, jpeg = cv2.imencode('.jpg', frame)
             frame_bytes = jpeg.tobytes()
@@ -148,4 +147,10 @@ def video_feed():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    try:
+        app.run(host='0.0.0.0', port=5000)
+    finally:
+        if originalVideoWriter:
+            originalVideoWriter.release()
+        if outputVideoWriter:
+            outputVideoWriter.release()

@@ -8,7 +8,7 @@ const HeartRate = () => {
         const videoElement = videoRef.current;
         const loadVideo = async () => {
             try {
-                const response = await fetch('/video_feed'); // Fetch from Flask API
+                const response = await fetch('/api/video_feed'); // Update URL to the new API route
                 const reader = response.body.getReader();
                 const stream = new ReadableStream({
                     start(controller) {
