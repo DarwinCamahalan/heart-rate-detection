@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import io from 'socket.io-client';
+import styles from '../styles/Home.module.css'
 
 export default function Home() {
   const [bpm, setBpm] = useState(0);
@@ -26,9 +27,12 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
-        <iframe src="http://127.0.0.1:5000/video_feed" width="640" height="480" frameBorder="0"></iframe>
-        <p>BPM: {bpm}</p>
+      <div className={styles.main}>
+      <p className={styles.bpmVal}>BPM: {bpm}</p>
+        <div className={styles.videoContainer}>
+        <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/face_detection" width="650" height="550" frameBorder="0"></iframe>
+        <iframe className={styles.mainVideo} src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
+        </div>
       </div>
     </>
   );
