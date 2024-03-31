@@ -43,6 +43,8 @@ minFrequency = 1.0
 maxFrequency = 2.0
 bufferSize = 150
 bufferIndex = 0
+boxColor = (0, 255, 0)
+boxWeight = 2
 
 # Initialize Gaussian Pyramid
 firstFrame = np.zeros((videoHeight, videoWidth, videoChannels))
@@ -70,7 +72,8 @@ def handle_disconnect():
 
 # Emit BPM value over WebSocket
 def emit_bpm(bpm):
-    socketio.emit('bpm_update', {'bpm': bpm})
+    rounded_bpm = round(bpm)  # Round BPM to the nearest whole number
+    socketio.emit('bpm_update', {'bpm': rounded_bpm})
 
 @app.route('/video_feed')
 def video_feed():
@@ -98,7 +101,6 @@ def video_feed():
                 bpm = 60.0 * hz
                 bpmBuffer[bpmBufferIndex] = bpm
                 bpmBufferIndex = (bpmBufferIndex + 1) % bpmBufferSize
-                emit_bpm(bpm)  # Emit BPM value over WebSocket
 
             # Amplify
             filtered = np.real(np.fft.ifft(fourierTransform, axis=0))
@@ -112,6 +114,11 @@ def video_feed():
             bufferIndex = (bufferIndex + 1) % bufferSize
 
             frame[videoHeight//2:realHeight-videoHeight//2, videoWidth//2:realWidth-videoWidth//2, :] = outputFrame
+            cv2.rectangle(frame, (videoWidth//2 , videoHeight//2), (realWidth-videoWidth//2, realHeight-videoHeight//2), boxColor, boxWeight)
+
+            if bufferIndex >= bpmBufferSize:
+                cv2.putText(frame, "BPM: %d" % bpmBuffer.mean(), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                emit_bpm(bpmBuffer.mean())  # Emit BPM value over WebSocket
 
             ret, jpeg = cv2.imencode('.jpg', frame)
             frame_bytes = jpeg.tobytes()

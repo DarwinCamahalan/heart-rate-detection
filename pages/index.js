@@ -27,7 +27,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <iframe src="http://127.0.0.1:5000/video_feed" width="640" height="480" frameborder="0"></iframe>
+        <iframe src="http://127.0.0.1:5000/video_feed" width="640" height="480" frameBorder="0"></iframe>
         <p>BPM: {bpm}</p>
       </div>
     </>
