@@ -63,6 +63,8 @@ bpmCalculationFrequency = 15
 bpmBufferIndex = 0
 bpmBufferSize = 10
 bpmBuffer = np.zeros((bpmBufferSize))
+# Add a global variable to track if BPM detection is complete
+bpm_detection_complete = False
 
 @socketio.on('connect')
 def handle_connect():
@@ -74,12 +76,20 @@ def handle_disconnect():
 
 # Emit BPM value over WebSocket
 def emit_bpm(bpm):
+    global bpm_detection_complete
     rounded_bpm = round(bpm)  # Round BPM to the nearest whole number
     socketio.emit('bpm_update', {'bpm': rounded_bpm})
+    # Check if BPM detection is complete
+    if bpm_detection_complete:
+        print("BPM detection is complete")
+        # Send boolean value to next JS website
+        socketio.emit('bpm_detection_complete', {'complete': True, 'bpm': rounded_bpm})
+        bpm_detection_complete = False
 
 @app.route('/bpm_detection')
 def bpm_detection():
     def generate(bufferIndex, bpmBufferIndex):
+        global bpm_detection_complete
         i = 0  # Initialize i outside the loop
         while True:
             ret, frame = webcam.read()
@@ -146,7 +156,10 @@ def bpm_detection():
                     
                     # Emit BPM value over WebSocket
                     emit_bpm(bpmBuffer.mean())
-
+                    
+                    if bufferIndex == bpmBufferSize:
+                        bpm_detection_complete = True
+                    
             ret, jpeg = cv2.imencode('.jpg', frame)
             frame_bytes = jpeg.tobytes()
             yield (b'--frame\r\n'
@@ -206,7 +219,7 @@ def face_detection():
             cv2.addWeighted(fps_overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
             cv2.putText(frame, fps_text, (5, 15), cv2.FONT_HERSHEY_PLAIN, 0.7, (255, 255, 255), 1)
 
-            resized_frame = cv2.resize(frame, (650, 550))
+            resized_frame = cv2.resize(frame, (600, 500))
 
             ret, jpeg = cv2.imencode('.jpg', resized_frame)
             frame_bytes = jpeg.tobytes()
@@ -214,7 +227,6 @@ def face_detection():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)

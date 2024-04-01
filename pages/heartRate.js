@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import io from 'socket.io-client';
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Home.module.css';
 
-export default function HearRate() {
+export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
+  const [bpmDetectionComplete, setBpmDetectionComplete] = useState(false);
+  const [finalBpm, setFinalBpm] = useState(0);
 
   useEffect(() => {
     const socket = io('http://localhost:5000');
@@ -12,6 +14,14 @@ export default function HearRate() {
     // Listen for BPM updates from the WebSocket server
     socket.on('bpm_update', ({ bpm }) => {
       setBpm(bpm);
+    });
+
+    // Listen for BPM detection completion status
+    socket.on('bpm_detection_complete', ({ complete, bpm }) => {
+      setBpmDetectionComplete(complete);
+      if (complete) {
+        setFinalBpm(bpm);
+      }
     });
 
     return () => {
@@ -28,10 +38,11 @@ export default function HearRate() {
         <link rel="icon" href="/icon.ico" />
       </Head>
       <div>
-        <p>BPM: {bpm}</p>
+        <p> Current BPM: {bpm}</p>
+        {bpmDetectionComplete ? <p>Final BPM: {finalBpm}</p> : null}
         <div>
-        <iframe src="http://127.0.0.1:5000/face_detection" width="650" height="550" frameBorder="0"></iframe>
-        <iframe src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
+          <iframe src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
+          <iframe src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
         </div>
       </div>
     </>
