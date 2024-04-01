@@ -87,39 +87,54 @@ def bpm_detection():
 
             detectionFrame = frame[videoHeight//2:realHeight-videoHeight//2, videoWidth//2:realWidth-videoWidth//2, :]
 
-            # Construct Gaussian Pyramid
-            videoGauss[bufferIndex] = buildGauss(detectionFrame, levels+1)[levels]
-            fourierTransform = np.fft.fft(videoGauss, axis=0)
+            # Perform eye detection
+            eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+            gray = cv2.cvtColor(detectionFrame, cv2.COLOR_BGR2GRAY)
+            eyes = eye_cascade.detectMultiScale(gray)
 
-            # Bandpass Filter
-            fourierTransform[mask == False] = 0
+            if len(eyes) == 0:
+                # No eyes detected, set bpm to 0 and font color to red
+                bpm = 0
+                font_color = (0, 0, 255)  # Red color
+                # Draw BPM value on the frame
+                cv2.putText(frame, f"BPM: {bpm}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, font_color, 2)
+                emit_bpm(bpm)
+            else:
+                font_color = (255, 255, 255)  # White color
+                # Eyes detected, proceed with normal BPM detection
+                videoGauss[bufferIndex] = buildGauss(detectionFrame, levels+1)[levels]
+                fourierTransform = np.fft.fft(videoGauss, axis=0)
 
-            # Grab a Pulse
-            if bufferIndex % bpmCalculationFrequency == 0:
-                for buf in range(bufferSize):
-                    fourierTransformAvg[buf] = np.real(fourierTransform[buf]).mean()
-                hz = frequencies[np.argmax(fourierTransformAvg)]
-                bpm = 60.0 * hz
-                bpmBuffer[bpmBufferIndex] = bpm
-                bpmBufferIndex = (bpmBufferIndex + 1) % bpmBufferSize
+                # Bandpass Filter
+                fourierTransform[mask == False] = 0
 
-            # Amplify
-            filtered = np.real(np.fft.ifft(fourierTransform, axis=0))
-            filtered = filtered * alpha
+                # Grab a Pulse
+                if bufferIndex % bpmCalculationFrequency == 0:
+                    for buf in range(bufferSize):
+                        fourierTransformAvg[buf] = np.real(fourierTransform[buf]).mean()
+                    hz = frequencies[np.argmax(fourierTransformAvg)]
+                    bpm = 60.0 * hz
+                    bpmBuffer[bpmBufferIndex] = bpm
+                    bpmBufferIndex = (bpmBufferIndex + 1) % bpmBufferSize
 
-            # Reconstruct Resulting Frame
-            filteredFrame = reconstructFrame(filtered, bufferIndex, levels)
-            outputFrame = detectionFrame + filteredFrame
-            outputFrame = cv2.convertScaleAbs(outputFrame)
+                # Amplify
+                filtered = np.real(np.fft.ifft(fourierTransform, axis=0))
+                filtered = filtered * alpha
 
-            bufferIndex = (bufferIndex + 1) % bufferSize
+                # Reconstruct Resulting Frame
+                filteredFrame = reconstructFrame(filtered, bufferIndex, levels)
+                outputFrame = detectionFrame + filteredFrame
+                outputFrame = cv2.convertScaleAbs(outputFrame)
 
-            frame[videoHeight//2:realHeight-videoHeight//2, videoWidth//2:realWidth-videoWidth//2, :] = outputFrame
-            cv2.rectangle(frame, (videoWidth//2 , videoHeight//2), (realWidth-videoWidth//2, realHeight-videoHeight//2), boxColor, boxWeight)
+                bufferIndex = (bufferIndex + 1) % bufferSize
+                
+                frame[videoHeight//2:realHeight-videoHeight//2, videoWidth//2:realWidth-videoWidth//2, :] = outputFrame
+                cv2.rectangle(frame, (videoWidth//2 , videoHeight//2), (realWidth-videoWidth//2, realHeight-videoHeight//2), boxColor, boxWeight)
 
-            if bufferIndex >= bpmBufferSize:
-                cv2.putText(frame, "BPM: %d" % bpmBuffer.mean(), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-                emit_bpm(bpmBuffer.mean())  # Emit BPM value over WebSocket
+                if bufferIndex >= bpmBufferSize:
+                    cv2.putText(frame, "BPM: %d" % bpmBuffer.mean(), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                    # Emit BPM value over WebSocket
+                    emit_bpm(bpmBuffer.mean())
 
             ret, jpeg = cv2.imencode('.jpg', frame)
             frame_bytes = jpeg.tobytes()
@@ -127,7 +142,6 @@ def bpm_detection():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
     return Response(generate(bufferIndex, bpmBufferIndex), mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 @app.route('/face_detection')
 def face_detection():
@@ -180,10 +194,6 @@ def face_detection():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-
-
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)
