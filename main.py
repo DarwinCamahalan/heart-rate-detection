@@ -156,26 +156,27 @@ def bpm_detection():
 
 @app.route('/face_detection')
 def face_detection():
-    def generate():
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        fps_start_time = time.time()
-        fps_frame_count = 0
+    # Initialize face cascade classifier
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
+    # Initialize FPS variables
+    fps_start_time = time.time()
+    fps_frame_count = 0
+
+    def generate():
+        nonlocal fps_start_time, fps_frame_count
         while True:
             ret, frame = webcam.read()
             if not ret:
                 break
 
             # Perform face detection
-            face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 
             for (x, y, w, h) in faces:
-                # Draw rectangle around faces
+                # Draw rectangle around faces with specified styling
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (86, 51, 255), 1)
-
-                # Add blue lines to the pointy edges of the rectangle
                 cv2.line(frame, (x, y), (x+int(w/10), y), (225, 105, 65), 2)
                 cv2.line(frame, (x, y), (x, y+int(h/10)), (225, 105, 65), 2)
                 cv2.line(frame, (x+w-int(w/10), y), (x+w, y), (225, 105, 65), 2)
@@ -185,17 +186,25 @@ def face_detection():
                 cv2.line(frame, (x+w-int(w/10), y+h), (x+w, y+h), (225, 105, 65), 2)
                 cv2.line(frame, (x+w, y+h-int(h/10)), (x+w, y+h), (225, 105, 65), 2)
 
-                # Add "Head" label text with red background and white font
-                cv2.rectangle(frame, (x, y - 15), (x + 33, y), (86, 51, 255), -1)
-                cv2.putText(frame, ' HEAD', (x, y - 5), font, 0.3, (255, 255, 255), 1, cv2.FONT_HERSHEY_COMPLEX_SMALL)
+                # Create a transparent green rectangle for the 'HEAD' label
+                overlay = frame.copy()  
+                cv2.rectangle(overlay, (x, y - 15), (x + 35, y), (86, 51, 255), -1)  
+                cv2.addWeighted(overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
+                cv2.putText(frame, 'HEAD', (x + 3, y - 4), cv2.FONT_HERSHEY_PLAIN, 0.7, (255, 255, 255), 1)
 
             # Calculate and display FPS
             fps_frame_count += 1
-            if fps_frame_count >= 30:  # Change to 30 to get the actual FPS for every second
+            if fps_frame_count >= 30:  
                 fps = fps_frame_count / (time.time() - fps_start_time)
-                cv2.putText(frame, f'FPS: {int(fps)}', (10, 20), font, 0.5, (255, 255, 255), 1, cv2.FONT_HERSHEY_COMPLEX_SMALL)
-                fps_frame_count = 0
-                fps_start_time = time.time()
+                fps_text = f'FPS: {round(fps)}'
+            else:
+                fps_text = ''
+
+            # Create a transparent green rectangle for the FPS text
+            fps_overlay = frame.copy()
+            cv2.rectangle(fps_overlay, (0, 3), (60, 18), (0, 0, 0), -1)
+            cv2.addWeighted(fps_overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
+            cv2.putText(frame, fps_text, (5, 15), cv2.FONT_HERSHEY_PLAIN, 0.7, (255, 255, 255), 1)
 
             resized_frame = cv2.resize(frame, (650, 550))
 
@@ -205,6 +214,7 @@ def face_detection():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)
