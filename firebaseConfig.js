@@ -1,5 +1,5 @@
-import firebase from 'firebase/compat/app'; // Import Firebase version 10
-import 'firebase/compat/auth'; // Import Firebase Authentication from version 10
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpBfVmnIpganb9-rs1PAujuewC-IAy1EU",
@@ -10,7 +10,11 @@ const firebaseConfig = {
   appId: "1:1071093228336:web:2b60be2afffe5b2be3def5"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
 
-export default firebase;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Cloud Firestore and get a reference to the service
+const db = getFirestore(app);
+
+export { app, db };
