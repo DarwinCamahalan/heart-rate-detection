@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
-
+import styles from '../styles/homePage.module.scss'
+import Image from 'next/image';
+import doctor from '../public/doctor.png'
 export default function Home() {
   return (
     <>
@@ -10,10 +12,23 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/Icon.ico" />
       </Head>
-      <div>
-        <h1>Welcome to Medical Consultation</h1>
-        <Link href="/login/patient"><button>Login as Patient</button></Link>
-        <Link href="/login/doctor"><button>Login as Doctor</button></Link>
+      <div className={styles.mainContainer}>
+        <div className={styles.banner}>        
+          <h1>Medical Consultation Made Online.</h1>
+
+          <p>An online medical consultation website that uses Artificial Intelligence as a primary step to gather information about the patient condition and asses by a professional doctor.</p>
+         
+          <div className={styles.buttons}>
+            <Link className={styles.patientBtn} href="/login/patient">Login As Patient</Link>
+            <Link className={styles.doctorBtn} href="/login/doctor">Login as Doctor</Link>
+         
+          </div>
+        </div>
+
+        <div className={styles.imageContainer}> 
+          <Image src={doctor} alt='Doctor'/>
+        </div>
+
       </div>
     </>
   );

@@ -1,0 +1,34 @@
+.navMainContainer{
+    width: 100%;
+    height: 4em;
+    background-color: white;
+    box-shadow: 0px 2px 12px -5px rgba(0,0,0,0.25);
+    ul{
+        width: 100%;
+        height: inherit;
+        display: flex;
+        align-items: center;
+
+        li{
+            a{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: black;
+                font-weight: bolder;
+                font-size: 1.1em;
+                .homepageLink{
+                    margin: 0 13em;
+                }
+
+                .logoImage{
+                    width: 2.5em;
+                    height: inherit;
+                    margin: 0 0.7em;
+                }
+            }
+        }
+    }
+
+
+}

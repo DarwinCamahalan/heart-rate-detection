@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "app": "concurrently \"npm run dev\" \"python main.py\"",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -16,8 +17,13 @@
     "js-cookie": "^3.0.5",
     "next": "14.1.4",
     "react": "18.2.0",
+    "react-circular-progressbar": "^2.1.0",
     "react-dom": "18.2.0",
+    "sass": "^1.72.0",
     "socket.io-client": "^4.7.5",
     "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }

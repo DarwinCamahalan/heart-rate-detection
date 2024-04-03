@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import io from 'socket.io-client';
-import styles from '../styles/Home.module.css';
+import styles from '../styles/heartRate.module.scss'
+import { CircularProgressbarWithChildren, buildStyles   } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import Image from 'next/image';
+import hearBeat from '../public/heartbeat.gif'
+
 
 export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
@@ -39,13 +44,33 @@ export default function HeartRate() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/icon.ico" />
       </Head>
-      <div>
-        <p> Current BPM: {bpm}</p>
-        {bpmDetectionComplete ? <p>Final BPM: {finalBpm}</p> : null}
-        <p>Buffer Index: {bufferIndex}</p> {/* Display bufferIndex */}
-        <div>
-          <iframe src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
-          <iframe src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
+      <div className={styles.mainContainer}>
+
+        {/* {bpmDetectionComplete ? <p>Final BPM: {finalBpm}</p> : null}
+        <p>Buffer Index: {bufferIndex}</p> */}
+        
+        <div className={styles.showCard}>
+        <div className={styles.videoContainer}>
+          <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
+          <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
+        </div>
+
+        <div className={styles.bpmCounter}>
+          <CircularProgressbarWithChildren className={styles.progressBar} value={bufferIndex}
+            styles={buildStyles({
+              strokeLinecap: 'butt',
+              pathTransitionDuration: 0.1,
+              transition: 'stroke-dashoffset 0.5s ease 0s',
+              transform: 'rotate(0.25turn)',
+              transformOrigin: 'center center',
+              pathColor: `rgba(222, 0, 56, ${bufferIndex / 100})`,
+              trailColor: '#ffebeb',
+            })}
+          >    
+            <Image src={hearBeat} alt='Heart Beat'/>
+            <span>{bpm}</span>
+          </CircularProgressbarWithChildren >
+        </div>
         </div>
       </div>
     </>

@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import Head from 'next/head';
+import styles from './login.module.scss'
+import Link from 'next/link';
 
 const DoctorLogin = () => {
   const [email, setEmail] = useState('');
@@ -11,20 +13,26 @@ const DoctorLogin = () => {
   const router = useRouter();
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      setError('Enter Email or Password');
+      return;
+    }
+
     try {
-      // Check if the user exists in Firestore and has the role 'patient'
       const querySnapshot = await getDocs(collection(db, 'doctors'));
+      let validUser = false;
       querySnapshot.forEach((doc) => {
         const userData = doc.data();
         if (userData.email === email && userData.password === password) {
-          // Redirect to patient dashboard or desired page
+          validUser = true;
           router.push('/doctor-dashboard');
-        } else {
-          setError('Invalid credentials for doctor.');
         }
       });
+      if (!validUser) {
+        setError('Invalid Credentials for Doctor.');
+      }
     } catch (error) {
-      setError('Error logging in. Please try again.'); // Display error message if login fails
+      setError('Error logging in. Please try again.');
     }
   };
 
@@ -33,12 +41,15 @@ const DoctorLogin = () => {
       <Head>
         <title>Doctor Login</title>
       </Head>
-      <div>
-        <h2>Doctor Login</h2>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button onClick={handleLogin}>Login</button>
-        {error && <p>{error}</p>}
+      <div className={styles.mainContainer}>
+        <div className={styles.loginForm}>
+          <h2>Doctor Login</h2>
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <button onClick={handleLogin}>Login</button>
+          {error && <p className={styles.errorMsg}>{error}</p>}
+          <p className={styles.signup}>No Doctor account? <Link href="/">Contact Administrator</Link></p>
+        </div>
       </div>
     </>
   );

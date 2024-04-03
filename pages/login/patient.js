@@ -1,10 +1,10 @@
-// PatientLogin.js
 import { useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import Link from 'next/link';
 import Head from 'next/head';
-import Cookies from 'js-cookie'; // Import js-cookie library
+import Cookies from 'js-cookie';
+import styles from './login.module.scss'
 
 const PatientLogin = () => {
   const [email, setEmail] = useState('');
@@ -12,28 +12,30 @@ const PatientLogin = () => {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      setError('Enter Email or Password');
+      return;
+    }
+
     try {
-      // Check if the user exists in Firestore and has the role 'patient'
       const querySnapshot = await getDocs(collection(db, 'patients'));
       let validUser = false;
       querySnapshot.forEach((doc) => {
         const userData = doc.data();
-        if (userData.email === email && userData.password === password && userData.role === 'patient') {
+        if (userData.email === email && userData.password === password && userData.role === 'Patient') {
           validUser = true;
-          // Set email and showModal cookies upon successful login
           Cookies.set('patientEmail', email);
           Cookies.set('showModal', false);
         }
       });
 
       if (validUser) {
-        // Redirect to patient dashboard
-        window.location.href = '/patient-dashboard'; // Redirect without using router
+        window.location.href = '/patient-dashboard';
       } else {
-        setError('Invalid credentials for patient.');
+        setError('Invalid Credentials for Patient.');
       }
     } catch (error) {
-      setError('Error logging in. Please try again.'); // Display error message if login fails
+      setError('Error logging in. Please try again.');
     }
   };
 
@@ -42,13 +44,15 @@ const PatientLogin = () => {
       <Head>
         <title>Patient Login</title>
       </Head>
-      <div>
-        <h2>Patient Login</h2>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button onClick={handleLogin}>Login</button>
-        {error && <p>{error}</p>}
-        <p>No patient account? <Link href="/signup/patient">Sign up as a patient</Link></p>
+      <div className={styles.mainContainer}>
+          <div className={styles.loginForm}>
+            <h2>Patient Login</h2>
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <button onClick={handleLogin}>Login</button>
+            {error && <p className={styles.errorMsg}>{error}</p>}
+            <p className={styles.signup}>No Patient account? <Link href="/signup/patient">Sign Up as a Patient</Link></p>
+          </div>
       </div>
     </>
   );
