@@ -74,11 +74,11 @@ def handle_connect():
 def handle_disconnect():
     print('Client disconnected')
 
-# Emit BPM value over WebSocket
-def emit_bpm(bpm):
+# Emit BPM value and bufferIndex over WebSocket
+def emit_bpm(bpm, buffer_index):
     global bpm_detection_complete
     rounded_bpm = round(bpm)  # Round BPM to the nearest whole number
-    socketio.emit('bpm_update', {'bpm': rounded_bpm})
+    socketio.emit('bpm_update', {'bpm': rounded_bpm, 'bufferIndex': buffer_index})
     # Check if BPM detection is complete
     if bpm_detection_complete:
         print("BPM detection is complete")
@@ -136,6 +136,7 @@ def bpm_detection():
             if len(eyes) == 0:
                 # No eyes detected, set bpm to 0 and font color to red
                 bpm = 0
+                bufferIndex = 0
                 # Create a transparent red rectangle
                 overlay = frame.copy()  # Create a copy of the frame
                 cv2.rectangle(overlay, (0, 5), (143, 30), (0, 0, 255), -1)  # Draw the red rectangle on the copy
@@ -143,7 +144,7 @@ def bpm_detection():
                 # Blend the overlay with the frame
                 cv2.addWeighted(overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
                 cv2.putText(frame, f"NO FACE FOUND", (5, 23), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-                emit_bpm(bpm)
+                emit_bpm(bpm, bufferIndex)
             else:
                 if bufferIndex >= bpmBufferSize:
                     # Create a transparent green rectangle
@@ -155,8 +156,8 @@ def bpm_detection():
                     cv2.putText(frame, f"BPM: {round(bpmBuffer.mean())}", (5, 23), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
                     
                     # Emit BPM value over WebSocket
-                    emit_bpm(bpmBuffer.mean())
-                    
+                    emit_bpm(bpmBuffer.mean(), bufferIndex)
+                    # print(bufferIndex) pass this
                     if bufferIndex == bpmBufferSize:
                         bpm_detection_complete = True
                     

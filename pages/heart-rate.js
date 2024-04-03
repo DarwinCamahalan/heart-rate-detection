@@ -7,13 +7,15 @@ export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
   const [bpmDetectionComplete, setBpmDetectionComplete] = useState(false);
   const [finalBpm, setFinalBpm] = useState(0);
+  const [bufferIndex, setBufferIndex] = useState(0);
 
   useEffect(() => {
     const socket = io('http://localhost:5000');
 
     // Listen for BPM updates from the WebSocket server
-    socket.on('bpm_update', ({ bpm }) => {
+    socket.on('bpm_update', ({ bpm, bufferIndex }) => {
       setBpm(bpm);
+      setBufferIndex(bufferIndex); // Update bufferIndex state
     });
 
     // Listen for BPM detection completion status
@@ -40,6 +42,7 @@ export default function HeartRate() {
       <div>
         <p> Current BPM: {bpm}</p>
         {bpmDetectionComplete ? <p>Final BPM: {finalBpm}</p> : null}
+        <p>Buffer Index: {bufferIndex}</p> {/* Display bufferIndex */}
         <div>
           <iframe src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
           <iframe src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>

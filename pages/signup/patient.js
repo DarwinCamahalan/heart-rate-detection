@@ -1,26 +1,49 @@
+// SignUpPatient.js
 import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import Head from 'next/head';
+import { v4 as uuidv4 } from 'uuid';
+import Cookies from 'js-cookie'; // Import js-cookie library
 
 const SignUpPatient = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
 
   const handleSignUp = async () => {
     try {
-      // Add patient data to Firestore
-      const docRef = await addDoc(collection(db, 'patients'), {
+      // Check if the email already exists in the database
+      const querySnapshot = await getDocs(
+        query(collection(db, 'patients'), where('email', '==', email))
+      );
+      if (!querySnapshot.empty) {
+        setError('Email already exists. Please use a different email.');
+        return;
+      }
+
+      // Generate a UUID
+      const uid = uuidv4();
+
+      // Format the creation date to MM/DD/YYYY
+      const currentDate = new Date();
+      const formattedCreationDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+
+      // Add patient data to Firestore with provided UID
+      await addDoc(collection(db, 'patients'), {
+        uid,
         email,
         password,
-        role: 'patient'
+        role: 'patient',
+        createdOn: formattedCreationDate // Use formatted date
       });
-      console.log('Document written with ID: ', docRef.id);
+
+      // Set email and showModal cookies upon successful signup
+      Cookies.set('patientEmail', email);
+      Cookies.set('showModal', true);
+
       // Redirect to patient dashboard or desired page
-      router.push('/patient-dashboard');
+      window.location.href = '/patient-dashboard'; // Redirect without using router
     } catch (error) {
       setError(error.message);
     }

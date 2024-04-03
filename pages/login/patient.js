@@ -1,29 +1,37 @@
+// PatientLogin.js
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import Link from 'next/link';
 import Head from 'next/head';
+import Cookies from 'js-cookie'; // Import js-cookie library
 
 const PatientLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
 
   const handleLogin = async () => {
     try {
       // Check if the user exists in Firestore and has the role 'patient'
       const querySnapshot = await getDocs(collection(db, 'patients'));
+      let validUser = false;
       querySnapshot.forEach((doc) => {
         const userData = doc.data();
         if (userData.email === email && userData.password === password && userData.role === 'patient') {
-          // Redirect to patient dashboard or desired page
-          router.push('/patient-dashboard');
-        } else {
-          setError('Invalid credentials for patient.');
+          validUser = true;
+          // Set email and showModal cookies upon successful login
+          Cookies.set('patientEmail', email);
+          Cookies.set('showModal', false);
         }
       });
+
+      if (validUser) {
+        // Redirect to patient dashboard
+        window.location.href = '/patient-dashboard'; // Redirect without using router
+      } else {
+        setError('Invalid credentials for patient.');
+      }
     } catch (error) {
       setError('Error logging in. Please try again.'); // Display error message if login fails
     }
