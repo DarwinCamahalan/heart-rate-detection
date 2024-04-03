@@ -10,7 +10,14 @@ export default function Home() {
         <title>Medical Consultation</title>
         <meta name="description" content="A Computer Vision project that detects a person's Heart Rate Per Minute (BPM) for medical consultation data gathering" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/Icon.ico" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <title>Medical Consultation</title>
+        <meta name="description" content="A Computer Vision project that detects a person's Heart Rate Per Minute (BPM) for medical consultation data gathering" />
+        <meta property="og:title" content="Medical Consultation" />
+        <meta property="og:description" content="A Computer Vision project that detects a person's Heart Rate Per Minute (BPM) for medical consultation data gathering" />
+        <meta property="og:image" content="//imgur.com/a/AMDet47" />
+        <meta property="og:url" content="https://medical-consultation.vercel.app" />
+        <meta property="og:type" content="website" />
       </Head>
       <div className={styles.mainContainer}>
         <div className={styles.banner}>        
