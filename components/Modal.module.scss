@@ -1,9 +1,12 @@
 .modalOverlay{
+    position: absolute;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.881);
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.933);
-    position: absolute;
+    z-index: 2;
 
     .modal{
         margin-top: 2em;

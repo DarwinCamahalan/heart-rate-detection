@@ -3,11 +3,21 @@
     height: 90.85vh;
     .subContainer{
         width: 100%;
-        padding: 2em 4em;
+
+        h1{
+            margin: 1em 0 0 1.8em;
+            text-transform: capitalize;
+        }
 
         .cards{
+            padding: 2em 4em;
             display: flex;
             flex-direction: column;
+
+            hr{
+                margin: 2em 0 0 0.5em;
+                border: 1px solid rgb(231, 231, 231);
+            }
 
             span{
                 margin-top: 1em;
@@ -16,7 +26,7 @@
             }
 
             .mainCard{
-                width: 17.6%;
+                width: 17em;
                 height: auto;
                 display: flex;
                 flex-direction: column;
@@ -24,10 +34,11 @@
                 box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
                 border-radius: 1em;
                 border: 1px solid rgb(219, 219, 219);
-                margin: 1em 0;
+
                 a{
                     color: black;
                 }
+
                 img{
                     width: 100%;
                     height: auto;
@@ -48,19 +59,49 @@
                 }
             }
 
-            .tempCard{
-                width: 10em;
-                height: 5em;
+            .comingCards{
                 display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: white;
-                box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
-                border-radius: 1em;
-                border: 1px solid rgb(219, 219, 219);
-                font-size: 1.2em;
-                margin-top: 1em;
-            }
+                flex-wrap: wrap;
+                margin-top: 1.5em;
+                .otherCard{
+                    width: 17em;
+                    height: auto;
+                    display: flex;
+                    flex-direction: column;
+                    background-color: white;
+                    box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
+                    border-radius: 1em;
+                    border: 1px solid rgb(219, 219, 219);
+                    margin-right: 1em;
+                    margin-bottom: 1em;
+                    
+                    a{
+                        color: black;
+                    }
+    
+                    img{
+                        width: 100%;
+                        height: auto;
+                        object-fit: cover;
+                        filter: blur(5px);
+                        margin: 0.5em 0;
+                        border-bottom: 1px solid rgb(225, 225, 225);
+                    }
+    
+                    .content{
+                        padding: 1em;
+    
+                        h2{
+                            margin-bottom: 0.3em;
+                        }
+    
+                        p{
+                            font-size: 0.9em;
+                            color: rgb(75, 74, 74);
+                        }
+                    }
+                }
+            }    
         }
     }
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -16,19 +16,30 @@ const PatientLogin = () => {
       setError('Enter Email or Password');
       return;
     }
-
+  
     try {
       const querySnapshot = await getDocs(collection(db, 'patients'));
       let validUser = false;
-      querySnapshot.forEach((doc) => {
-        const userData = doc.data();
+      const updatePromises = []; // Array to store promises for document updates
+  
+      querySnapshot.forEach((docSnapshot) => {
+        const userData = docSnapshot.data();
+        const docId = docSnapshot.id; // Access the document ID
         if (userData.email === email && userData.password === password && userData.role === 'Patient') {
           validUser = true;
           Cookies.set('patientEmail', email);
           Cookies.set('showModal', false);
+      
+          // Update the user document in the database to mark login as true
+          const userDocRef = doc(db, 'patients', docId); // Use docId here
+          updatePromises.push(updateDoc(userDocRef, { login: true }));
         }
       });
-
+      
+  
+      // Wait for all update operations to complete
+      await Promise.all(updatePromises);
+  
       if (validUser) {
         window.location.href = '/patient-dashboard';
       } else {
@@ -36,8 +47,11 @@ const PatientLogin = () => {
       }
     } catch (error) {
       setError('Error logging in. Please try again.');
+      console.log(error)
     }
   };
+  
+  
 
   return (
     <>

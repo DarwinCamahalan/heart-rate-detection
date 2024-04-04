@@ -49,7 +49,8 @@ const SignUpPatient = () => {
         email,
         password,
         role: 'Patient',
-        createdOn: formattedCreationDate // Use formatted date
+        createdOn: formattedCreationDate,
+        login: true
       });
 
       // Set email and showModal cookies upon successful signup

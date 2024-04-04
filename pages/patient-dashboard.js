@@ -3,12 +3,13 @@ import Modal from '../components/Modal';
 import PatientForm from '../components/PatientForm';
 import { db } from '../firebaseConfig';
 import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
-import Cookies from 'js-cookie'; // Import js-cookie library
+import Cookies from 'js-cookie';
 import Link from 'next/link';
 import styles from '../styles/patientDashboard.module.scss'
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import heartLogo from '../public/bpm-card-image.png'
+import tempImage from '../public/tempImage.jpg'
 
 const PatientDashboard = () => {
   const [showModal, setShowModal] = useState(true); // Initialize with default value
@@ -25,6 +26,7 @@ const PatientDashboard = () => {
   const [fullName, setFullName] = useState('');
   const patientEmail = Cookies.get('patientEmail');
   const router = useRouter();
+  const cardTitle = ["X-Ray Camera", "Tumor Detection", "Cancer Detection"];
 
   useEffect(() => {
     // Fetch patient data based on email from cookie
@@ -106,17 +108,28 @@ const PatientDashboard = () => {
           <h1>Welcome, {fullName}!</h1>
           <div className={styles.cards}>
             <div className={styles.mainCard}>
-            <Link href={"/heart-rate"}>
-              <Image src={heartLogo} alt="Card Image"/>
-              <div className={styles.content}>
-                <h2>Heart Rate Detection</h2>
-                <p>Using Computer Vision, Patient Heart Rate will be determine using only a Camera.</p>
-              </div>
-            </Link>
+              <Link href={"/heart-rate"}>
+                <Image src={heartLogo} alt="Card Image"/>
+                <div className={styles.content}>
+                  <h2>Heart Rate Detection</h2>
+                  <p>Using Computer Vision, Patient Heart Rate will be determined using only a Camera.</p>
+                </div>
+              </Link>
             </div>
+            <hr />
             <span>Coming Soon</span>
-            <div className={styles.tempCard}>
-              +
+            <div className={styles.comingCards}>
+              {cardTitle.map((title, index) => (
+                <div key={index} className={styles.otherCard}>
+                  <Link href={"#"}>
+                    <Image src={tempImage} alt="Card Image"/>
+                    <div className={styles.content}>
+                      <h2>{title}</h2>
+                      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet qui recusandae debitis!</p>
+                    </div>
+                  </Link>
+                </div>
+              ))}
             </div>
           </div>
         </div>
