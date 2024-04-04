@@ -27,7 +27,9 @@ const PatientLogin = () => {
         const docId = docSnapshot.id; // Access the document ID
         if (userData.email === email && userData.password === password && userData.role === 'Patient') {
           validUser = true;
-          Cookies.set('patientEmail', email);
+
+          Cookies.set('userEmail', email);
+          Cookies.set('dbLocation', 'patients');
           Cookies.set('showModal', false);
       
           // Update the user document in the database to mark login as true
@@ -36,7 +38,6 @@ const PatientLogin = () => {
         }
       });
       
-  
       // Wait for all update operations to complete
       await Promise.all(updatePromises);
   
@@ -51,7 +52,11 @@ const PatientLogin = () => {
     }
   };
   
-  
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleLogin();
+    }
+  };
 
   return (
     <>
@@ -61,8 +66,8 @@ const PatientLogin = () => {
       <div className={styles.mainContainer}>
           <div className={styles.loginForm}>
             <h2>Patient Login</h2>
-            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown}/>
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyDown}/>
             <button onClick={handleLogin}>Login</button>
             {error && <p className={styles.errorMsg}>{error}</p>}
             <p className={styles.signup}>No Patient account? <Link href="/signup/patient">Sign Up as a Patient</Link></p>

@@ -24,7 +24,7 @@ const PatientDashboard = () => {
   const [email, setEmail] = useState('');
   const [formError, setFormError] = useState('');
   const [fullName, setFullName] = useState('');
-  const patientEmail = Cookies.get('patientEmail');
+  const userEmail = Cookies.get('userEmail');
   const router = useRouter();
   const cardTitle = ["X-Ray Camera", "Tumor Detection", "Cancer Detection"];
 
@@ -33,7 +33,7 @@ const PatientDashboard = () => {
     const fetchPatientData = async () => {
       try {
         const patientCollectionRef = collection(db, 'patients');
-        const q = query(patientCollectionRef, where("email", "==", patientEmail));
+        const q = query(patientCollectionRef, where("email", "==", userEmail));
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const patientDoc = querySnapshot.docs[0];
@@ -51,7 +51,7 @@ const PatientDashboard = () => {
       }
     };
 
-    if (patientEmail) {
+    if (userEmail) {
       fetchPatientData();
     } else {
       console.log('No patient email found in cookies.');
@@ -62,7 +62,7 @@ const PatientDashboard = () => {
     if (showModalCookie !== undefined) {
       setShowModal(showModalCookie === 'true');
     }
-  }, [patientEmail]);
+  }, [userEmail]);
 
   // Function to handle form submission
   const handleSubmit = async () => {
@@ -98,6 +98,12 @@ const PatientDashboard = () => {
   // Function to handle modal close
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
   };
 
   return (
@@ -157,6 +163,7 @@ const PatientDashboard = () => {
           setBirthday={setBirthday}
           setGender={setGender}
           handleSubmit={handleSubmit}
+          handleKeyDown={handleKeyDown}
         />
       </Modal>
     </div>

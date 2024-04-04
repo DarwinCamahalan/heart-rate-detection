@@ -8,7 +8,9 @@ import logo from '../public/logo.png';
 import Cookies from 'js-cookie';
 
 const Navbar = () => {
-  const patientEmail = Cookies.get('patientEmail');
+  const userEmail = Cookies.get('userEmail');
+  const collectionName = Cookies.get('dbLocation');
+
   const [fullName, setFullName] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAccountName, setShowAccountName] = useState(false);
@@ -16,10 +18,10 @@ const Navbar = () => {
   const [uid, setUid] = useState('');
 
   useEffect(() => {
-    const fetchPatientData = async () => {
+    const fetchAccountData = async () => {
       try {
-        const patientCollectionRef = collection(db, 'patients'); // Use the collection function here
-        const q = query(patientCollectionRef, where("email", "==", patientEmail));
+        const patientCollectionRef = collection(db, collectionName === 'patients' ? 'patients' : 'doctors');
+        const q = query(patientCollectionRef, where("email", "==", userEmail));
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const patientDoc = querySnapshot.docs[0];
@@ -28,30 +30,31 @@ const Navbar = () => {
           setShowAccountName(data.login);
           setUid(patientDoc.id);
         } else {
-          console.log('No patient data found for this email.');
+          console.log('No account data found for this email.');
         }
       } catch (error) {
-        console.error('Error fetching patient data:', error);
+        console.error('Error fetching account data:', error);
       }
     };
 
-    if (patientEmail) {
-      fetchPatientData();
+    if (userEmail) {
+      fetchAccountData();
     } else {
-      console.log('No patient email found in cookies.');
+      console.log('No account email found in cookies.');
     }
-  }, [patientEmail]);
+  }, [userEmail, collectionName]);
 
   const handleLogout = async () => {
     try {
-      await updateDoc(doc(db, 'patients', uid), {
+      await updateDoc(doc(db, collectionName === 'patients' ? 'patients' : 'doctors', uid), {
         login: false
       });
       window.location.href = '/';
-      Cookies.remove('patientEmail');
+      Cookies.remove('userEmail');
+      Cookies.remove('dbLocation');
       Cookies.remove('showModal');
     } catch (error) {
-      console.error('Error updating patient account:', error);
+      console.error('Error updating account:', error);
     }
   };
 

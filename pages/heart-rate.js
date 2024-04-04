@@ -31,9 +31,9 @@ export default function HeartRate() {
 
     const fetchPatientData = async () => {
       try {
-        const patientEmail = Cookies.get('patientEmail');
-        if (patientEmail) {
-          const q = query(collection(db, 'patients'), where("email", "==", patientEmail));
+        const userEmail = Cookies.get('userEmail');
+        if (userEmail) {
+          const q = query(collection(db, 'patients'), where("email", "==", userEmail));
           const querySnapshot = await getDocs(q);
           if (!querySnapshot.empty) {
             const patientDoc = querySnapshot.docs[0];

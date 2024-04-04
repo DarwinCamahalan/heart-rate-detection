@@ -53,14 +53,21 @@ const SignUpPatient = () => {
         login: true
       });
 
-      // Set email and showModal cookies upon successful signup
-      Cookies.set('patientEmail', email);
+      // Set email, login and showModal cookies upon successful signup
+      Cookies.set('userEmail', email);
+      Cookies.set('dbLocation', 'patients');
       Cookies.set('showModal', true);
 
       // Redirect to patient dashboard or desired page
       window.location.href = '/patient-dashboard'; // Redirect without using router
     } catch (error) {
       setError(error.message);
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSignUp();
     }
   };
 
@@ -72,8 +79,8 @@ const SignUpPatient = () => {
       <div className={styles.mainContainer}>
         <div className={styles.signUpForm}>
           <h2>Patient Sign Up</h2>
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown}/>
+          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyDown}/>
           <button onClick={handleSignUp}>Create Account</button>
           {error && <p className={styles.errorMsg}>{error}</p>}
           <p className={styles.login}>Already have an Account? <Link href="/login/patient">Login as Patient</Link></p>

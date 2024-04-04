@@ -1,8 +1,9 @@
+import styles from '../styles/doctorDashboard.module.scss'
 
 const DoctorDashboard = () => {
   return (
-    <div>
-        Welcome Doctor
+    <div className={styles.mainContainer}>
+        <h1>Welcome Doctor!</h1>
     </div>
   );
 };
