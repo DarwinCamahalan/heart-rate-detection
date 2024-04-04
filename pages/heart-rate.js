@@ -2,28 +2,33 @@ import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import io from 'socket.io-client';
 import styles from '../styles/heartRate.module.scss'
-import { CircularProgressbarWithChildren, buildStyles   } from 'react-circular-progressbar';
+import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import Image from 'next/image';
-import hearBeat from '../public/heartbeat.gif'
-
+import hearBeat from '../public/heartbeat.gif';
+import Cookies from 'js-cookie';
+import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
   const [bpmDetectionComplete, setBpmDetectionComplete] = useState(false);
   const [finalBpm, setFinalBpm] = useState(0);
   const [bufferIndex, setBufferIndex] = useState(0);
+  const [showFinalBpm, setShowFinalBpm] = useState(false);
+  const [patientData, setPatientData] = useState(null); // State to store patient data
 
   useEffect(() => {
     const socket = io('http://localhost:5000');
 
-    // Listen for BPM updates from the WebSocket server
     socket.on('bpm_update', ({ bpm, bufferIndex }) => {
       setBpm(bpm);
-      setBufferIndex(bufferIndex); // Update bufferIndex state
+      setBufferIndex(bufferIndex);
+      if (bufferIndex === 149) {
+        setShowFinalBpm(true);
+      }
     });
 
-    // Listen for BPM detection completion status
     socket.on('bpm_detection_complete', ({ complete, bpm }) => {
       setBpmDetectionComplete(complete);
       if (complete) {
@@ -31,10 +36,70 @@ export default function HeartRate() {
       }
     });
 
+    const fetchPatientData = async () => {
+      try {
+        const patientEmail = Cookies.get('patientEmail');
+        if (patientEmail) {
+          const q = query(collection(db, 'patients'), where("email", "==", patientEmail));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const patientDoc = querySnapshot.docs[0];
+            const data = patientDoc.data();
+            setPatientData({ ...data, id: patientDoc.id }); // Include document ID in patientData state
+          } else {
+            console.log('No patient data found for this email.');
+          }
+        } else {
+          console.log('No patient email found in cookies.');
+        }
+      } catch (error) {
+        console.error('Error fetching patient data:', error);
+      }
+    };
+
+    fetchPatientData();
+
     return () => {
       socket.disconnect();
     };
   }, []);
+
+  const handleSubmit = async () => {
+    try {
+      const currentDate = new Date().toLocaleDateString();
+      const currentTime = new Date().toLocaleTimeString();
+
+      if (!patientData) {
+        console.error('Patient data not available.');
+        return;
+      }
+
+      const newBpmData = {
+        bpmValue: finalBpm
+      };
+
+      const existingBpm = patientData.bpm || {};
+      const updatedBpm = {
+        ...existingBpm,
+        [currentDate]: {
+          ...existingBpm[currentDate],
+          [currentTime]: newBpmData
+        }
+      };
+
+      await updateDoc(doc(db, 'patients', patientData.id), { // Use patientData.id as document ID
+        ...patientData,
+        bpm: updatedBpm
+      });
+
+      window.location.href = '/patient-dashboard';
+
+      // Additional logic after submitting BPM data can be added here
+
+    } catch (error) {
+      console.error('Error submitting BPM:', error);
+    }
+  };
 
   return (
     <>
@@ -45,33 +110,43 @@ export default function HeartRate() {
         <link rel="icon" href="/icon.ico" />
       </Head>
       <div className={styles.mainContainer}>
-
-        {/* {bpmDetectionComplete ? <p>Final BPM: {finalBpm}</p> : null}
-        <p>Buffer Index: {bufferIndex}</p> */}
-        
-        <div className={styles.showCard}>
-        <div className={styles.videoContainer}>
-          <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
-          <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
-        </div>
-
-        <div className={styles.bpmCounter}>
-          <CircularProgressbarWithChildren className={styles.progressBar} value={bufferIndex}
-            styles={buildStyles({
-              strokeLinecap: 'butt',
-              pathTransitionDuration: 0.1,
-              transition: 'stroke-dashoffset 0.5s ease 0s',
-              transform: 'rotate(0.25turn)',
-              transformOrigin: 'center center',
-              pathColor: `rgba(222, 0, 56, ${bufferIndex / 100})`,
-              trailColor: '#ffebeb',
-            })}
-          >    
-            <Image src={hearBeat} alt='Heart Beat'/>
-            <span>{bpm}</span>
-          </CircularProgressbarWithChildren >
-        </div>
-        </div>
+        {showFinalBpm ? (
+          <div className={styles.modalBPM}>
+            <div className={styles.displayBPM}>
+              <p>Your BPM</p>
+              <span>{finalBpm}</span>
+              <div className={styles.buttons}>
+                <button onClick={handleSubmit}>Submit</button>
+                <button onClick={(()=>{window.location.href = '/heart-rate';})}>Try Again</button>
+                </div>
+              
+            </div>
+          </div>
+          
+        ) : (
+          <div className={styles.showCard}>
+            <div className={styles.videoContainer}>
+              <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
+              <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
+            </div>
+            <div className={styles.bpmCounter}>
+              <CircularProgressbarWithChildren className={styles.progressBar} value={bufferIndex}
+                styles={buildStyles({
+                  strokeLinecap: 'butt',
+                  pathTransitionDuration: 0.1,
+                  transition: 'stroke-dashoffset 0.5s ease 0s',
+                  transform: 'rotate(0.25turn)',
+                  transformOrigin: 'center center',
+                  pathColor: `rgba(222, 0, 56, ${bufferIndex / 100})`,
+                  trailColor: '#ffebeb',
+                })}
+              >
+                <Image src={hearBeat} alt='Heart Beat' />
+                <span>{bpm}</span>
+              </CircularProgressbarWithChildren>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
