@@ -63,8 +63,6 @@ bpmCalculationFrequency = 15
 bpmBufferIndex = 0
 bpmBufferSize = 10
 bpmBuffer = np.zeros((bpmBufferSize))
-# Add a global variable to track if BPM detection is complete
-bpm_detection_complete = False
 
 @socketio.on('connect')
 def handle_connect():
@@ -76,21 +74,12 @@ def handle_disconnect():
 
 # Emit BPM value and bufferIndex over WebSocket
 def emit_bpm(bpm, buffer_index):
-    global bpm_detection_complete
     rounded_bpm = round(bpm)  # Round BPM to the nearest whole number
     socketio.emit('bpm_update', {'bpm': rounded_bpm, 'bufferIndex': buffer_index})
-    # Check if BPM detection is complete
-    if bpm_detection_complete:
-        print("BPM detection is complete")
-        # Send boolean value to next JS website
-        socketio.emit('bpm_detection_complete', {'complete': True, 'bpm': rounded_bpm})
-        bpm_detection_complete = False
 
 @app.route('/bpm_detection')
 def bpm_detection():
     def generate(bufferIndex, bpmBufferIndex):
-        global bpm_detection_complete
-        i = 0  # Initialize i outside the loop
         while True:
             ret, frame = webcam.read()
             if not ret:
@@ -98,10 +87,16 @@ def bpm_detection():
 
             detectionFrame = frame[videoHeight//2:realHeight-videoHeight//2, videoWidth//2:realWidth-videoWidth//2, :]
             
-            # Perform eye detection
-            eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
-            gray = cv2.cvtColor(detectionFrame, cv2.COLOR_BGR2GRAY)
-            eyes = eye_cascade.detectMultiScale(gray)
+            # # Perform eye detection
+            # eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+            # gray = cv2.cvtColor(detectionFrame, cv2.COLOR_BGR2GRAY)
+            # eyes = eye_cascade.detectMultiScale(gray)
+            
+            face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+            
+            # Perform face detection
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
             
             # Eyes detected, proceed with normal BPM detection
             videoGauss[bufferIndex] = buildGauss(detectionFrame, levels+1)[levels]
@@ -133,7 +128,7 @@ def bpm_detection():
             frame[videoHeight//2:realHeight-videoHeight//2, videoWidth//2:realWidth-videoWidth//2, :] = outputFrame
             cv2.rectangle(frame, (videoWidth//2 , videoHeight//2), (realWidth-videoWidth//2, realHeight-videoHeight//2), boxColor, boxWeight)
 
-            if len(eyes) == 0:
+            if len(faces) == 0:
                 # No eyes detected, set bpm to 0 and font color to red
                 bpm = 0
                 bufferIndex = 0
@@ -157,9 +152,7 @@ def bpm_detection():
                     
                     # Emit BPM value over WebSocket
                     emit_bpm(bpmBuffer.mean(), bufferIndex)
-                    # print(bufferIndex) pass this
-                    if bufferIndex == bpmBufferSize:
-                        bpm_detection_complete = True
+
                     
             ret, jpeg = cv2.imencode('.jpg', frame)
             frame_bytes = jpeg.tobytes()

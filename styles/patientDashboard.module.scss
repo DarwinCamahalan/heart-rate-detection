@@ -25,40 +25,54 @@
                 font-size: 1.5em;
             }
 
-            .mainCard{
-                width: 17em;
-                height: auto;
+            .topCard{
                 display: flex;
-                flex-direction: column;
-                background-color: white;
-                box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
-                border-radius: 1em;
-                border: 1px solid rgb(219, 219, 219);
+                justify-content: space-between;
 
-                a{
-                    color: black;
-                }
-
-                img{
+                .bpmData{
                     width: 100%;
-                    height: auto;
-                    border-bottom: 1px solid rgb(225, 225, 225);
+                    background-color: black;
                 }
 
-                .content{
-                    padding: 1em;
-
-                    h2{
-                        margin-bottom: 0.3em;
-                    }
-
-                    p{
-                        font-size: 0.9em;
-                        color: rgb(75, 74, 74);
+                .mainCardContainer{
+                    width: 100%;
+                    .mainCard{
+                        width: 17em;
+                        height: auto;
+                        display: flex;
+                        flex-direction: column;
+                        background-color: white;
+                        box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
+                        border-radius: 1em;
+                        border: 1px solid rgb(219, 219, 219);
+        
+                        a{
+                            color: black;
+                        }
+        
+                        img{
+                            width: 100%;
+                            height: auto;
+                            border-bottom: 1px solid rgb(225, 225, 225);
+                        }
+        
+                        .content{
+                            padding: 1em;
+        
+                            h2{
+                                margin-bottom: 0.3em;
+                            }
+        
+                            p{
+                                font-size: 0.9em;
+                                color: rgb(75, 74, 74);
+                            }
+                        }
                     }
                 }
+
             }
-
+            
             .comingCards{
                 display: flex;
                 flex-wrap: wrap;

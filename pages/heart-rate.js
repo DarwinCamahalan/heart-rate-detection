@@ -12,11 +12,10 @@ import { db } from '../firebaseConfig';
 
 export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
-  const [bpmDetectionComplete, setBpmDetectionComplete] = useState(false);
   const [finalBpm, setFinalBpm] = useState(0);
   const [bufferIndex, setBufferIndex] = useState(0);
   const [showFinalBpm, setShowFinalBpm] = useState(false);
-  const [patientData, setPatientData] = useState(null); // State to store patient data
+  const [patientData, setPatientData] = useState(null);
 
   useEffect(() => {
     const socket = io('http://localhost:5000');
@@ -26,12 +25,6 @@ export default function HeartRate() {
       setBufferIndex(bufferIndex);
       if (bufferIndex === 149) {
         setShowFinalBpm(true);
-      }
-    });
-
-    socket.on('bpm_detection_complete', ({ complete, bpm }) => {
-      setBpmDetectionComplete(complete);
-      if (complete) {
         setFinalBpm(bpm);
       }
     });

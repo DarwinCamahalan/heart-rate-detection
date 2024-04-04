@@ -102,19 +102,23 @@ const PatientDashboard = () => {
 
   return (
     <div>
-
       <div className={styles.mainContainer}>
         <div className={styles.subContainer}>
           <h1>Welcome, {fullName}!</h1>
           <div className={styles.cards}>
-            <div className={styles.mainCard}>
-              <Link href={"/heart-rate"}>
-                <Image src={heartLogo} alt="Card Image"/>
-                <div className={styles.content}>
-                  <h2>Heart Rate Detection</h2>
-                  <p>Using Computer Vision, Patient Heart Rate will be determined using only a Camera.</p>
+            <div className={styles.topCard}>
+              <div className={styles.mainCardContainer}>
+                <div className={styles.mainCard}>
+                  <Link href={"/heart-rate"}>
+                    <Image src={heartLogo} alt="Card Image"/>
+                    <div className={styles.content}>
+                      <h2>Heart Rate Detection</h2>
+                      <p>Using Computer Vision, Patient Heart Rate will be determined using only a Camera.</p>
+                    </div>
+                  </Link>
                 </div>
-              </Link>
+              </div>
+              <div className={styles.bpmData}>TEST</div>
             </div>
             <hr />
             <span>Coming Soon</span>
