@@ -87,6 +87,55 @@
                             }
                         }
                     }
+
+                    .displayBpm{
+                        height: auto;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-around;
+
+                        .currentBpmCard{
+                            width: 12em;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            background-color: white;
+                            box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
+                            border-radius: 1em;
+                            border: 1px solid rgb(219, 219, 219);
+                            margin-left: 9em;
+                            text-align: center;
+                            padding: 1em 0;
+
+                            h1{
+                                margin: 0;
+                                font-size: 1.5em;
+                                margin-bottom: 0.3em;
+                            }
+
+                            p{
+                                &:first-child{
+                                    font-size: 3.5em;
+                                    font-weight: bolder;
+                                    color: rgb(3, 189, 0);
+                                }
+
+                                &:last-child{
+                                    font-size: 1.2sem;
+                                    margin-top: 0.5em;
+                                    color: rgb(108, 108, 108);
+                                }
+                            }
+
+                            .noDataBpm{
+                                font-weight: bolder;
+                                font-size: 3em;
+                                color: rgb(189, 189, 189) !important;
+                            }
+                        }
+                    }
+
                 }
 
             }
