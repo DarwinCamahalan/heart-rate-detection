@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './patientForm.module.scss';
+import { motion } from "framer-motion"
 
 const PatientForm = ({
   firstName,
@@ -59,7 +60,9 @@ const PatientForm = ({
           </div>
         </div>
         {formError && <p className={styles.errorMsg}>{formError}</p>}
-        <button onClick={handleSubmit}>Submit</button>
+        <motion.button onClick={handleSubmit}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.9 }}>Submit</motion.button>
       </div>
     </div>
   );

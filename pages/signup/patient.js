@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'js-cookie';
 import styles from './signup.module.scss'
 import Link from 'next/link';
+import { motion } from "framer-motion"
 
 const SignUpPatient = () => {
   const [email, setEmail] = useState('');
@@ -82,7 +83,9 @@ const SignUpPatient = () => {
           <h2>Patient Sign Up</h2>
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown}/>
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyDown}/>
-          <button onClick={handleSignUp}>Create Account</button>
+          <motion.button onClick={handleSignUp}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.9 }}>Create Account</motion.button>
           {error && <p className={styles.errorMsg}>{error}</p>}
           <p className={styles.login}>Already have an Account? <Link href="/login/patient">Login as Patient</Link></p>
         </div>

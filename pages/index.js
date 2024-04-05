@@ -3,6 +3,7 @@ import Link from 'next/link';
 import styles from '../styles/homePage.module.scss'
 import Image from 'next/image';
 import doctor from '../public/doctor.png'
+import { motion } from "framer-motion"
 export default function Home() {
   return (
     <>
@@ -13,7 +14,10 @@ export default function Home() {
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
       <div className={styles.mainContainer}>
-        <div className={styles.banner}>        
+        <motion.div className={styles.banner}
+            initial={{ opacity: 0}}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9 }}>        
           <h1>Medical Consultation Made Online.</h1>
 
           <p>An online medical consultation website that uses Artificial Intelligence as a primary step to gather information about the patient condition and asses by a professional doctor.</p>
@@ -23,11 +27,14 @@ export default function Home() {
             <Link className={styles.doctorBtn} href="/login/doctor">Login as Doctor</Link>
          
           </div>
-        </div>
+        </motion.div>
 
-        <div className={styles.imageContainer}> 
+        <motion.div className={styles.imageContainer}
+            initial={{ opacity: 0}}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.7 }}> 
           <Image src={doctor} alt='Doctor'/>
-        </div>
+        </motion.div>
 
       </div>
     </>

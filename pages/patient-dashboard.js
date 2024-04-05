@@ -13,6 +13,7 @@ import heartLogo from '../public/bpm-card-image.png';
 import tempImage from '../public/tempImage.jpg';
 import { Scatter } from 'react-chartjs-2';
 import moment from 'moment';
+import { motion } from "framer-motion"
 import 'chartjs-adapter-moment'; // Import Moment.js adapter for Chart.js
 import { Chart, LinearScale, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
 Chart.register(LinearScale, PointElement, Tooltip, Legend, TimeScale);
@@ -107,7 +108,7 @@ const PatientDashboard = () => {
       const entries = Object.values(bpmData[selectedDate]);
       const totalBpm = entries.reduce((acc, entry) => acc + entry.bpmValue, 0);
       const avgBpm = totalBpm / entries.length;
-      setAverageBpm(avgBpm.toFixed(2));
+      setAverageBpm(avgBpm.toFixed(1));
     } else {
       setAverageBpm(null);
     }
@@ -171,7 +172,9 @@ const PatientDashboard = () => {
           <div className={styles.cards}>
             <div className={styles.topCard}>
               <div className={styles.mainCardContainer}>
-                <div className={styles.mainCard}>
+                <motion.div className={styles.mainCard}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.9 }}>
                   <Link href={'/heart-rate'}>
                     <Image src={heartLogo} alt="Card Image" />
                     <div className={styles.content}>
@@ -179,7 +182,7 @@ const PatientDashboard = () => {
                       <p>Using Computer Vision, Patient Heart Rate will be determined using only a Camera.</p>
                     </div>
                   </Link>
-                </div>
+                </motion.div>
                 <div className={styles.displayBpm}>
                   <div className={styles.currentBpmCard}>
                     <h1>Current BPM</h1>
@@ -267,7 +270,9 @@ const PatientDashboard = () => {
             <span>Coming Soon</span>
             <div className={styles.comingCards}>
               {cardTitle.map((title, index) => (
-                <div key={index} className={styles.otherCard}>
+                <motion.div key={index} className={styles.otherCard}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.9 }}>
                   <Link href={'#'}>
                     <Image src={tempImage} alt="Card Image" />
                     <div className={styles.content}>
@@ -275,7 +280,7 @@ const PatientDashboard = () => {
                       <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet qui recusandae debitis!</p>
                     </div>
                   </Link>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>

@@ -31,13 +31,13 @@
 
                 .bpmData{
                     width: 100%;
-
                     .selectDate{
                         margin-bottom: 0.6em;
                         background-color: white;
                         border: 1px solid black;
                         font-size: 1.01em;
                         border-radius: 0.2em;
+                        padding: 0.3em 0.5em;
                     }
 
                     .noData{
@@ -54,6 +54,7 @@
                     width: 100%;
                     display: flex;
                     height: 100%;
+
                     .mainCard{
                         width: 17em;
                         height: auto;
@@ -92,10 +93,9 @@
                         height: auto;
                         display: flex;
                         flex-direction: column;
-                        justify-content: space-around;
 
                         .currentBpmCard{
-                            width: 12em;
+                            width: 10em;
                             display: flex;
                             flex-direction: column;
                             justify-content: center;
@@ -104,25 +104,25 @@
                             box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
                             border-radius: 1em;
                             border: 1px solid rgb(219, 219, 219);
-                            margin-left: 9em;
                             text-align: center;
-                            padding: 1em 0;
+                            padding: 0.7em 0;
+                            margin: 0 0 0.5em 0.5em;
 
                             h1{
                                 margin: 0;
-                                font-size: 1.5em;
+                                font-size: 1.1em;
                                 margin-bottom: 0.3em;
                             }
 
                             p{
                                 &:first-child{
-                                    font-size: 3.5em;
+                                    font-size: 2.8em;
                                     font-weight: bolder;
                                     color: rgb(3, 189, 0);
                                 }
 
                                 &:last-child{
-                                    font-size: 1.2sem;
+                                    font-size: 1em;
                                     margin-top: 0.5em;
                                     color: rgb(108, 108, 108);
                                 }

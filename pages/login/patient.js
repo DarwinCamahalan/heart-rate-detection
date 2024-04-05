@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Head from 'next/head';
 import Cookies from 'js-cookie';
 import styles from './login.module.scss'
+import { motion } from "framer-motion"
 
 const PatientLogin = () => {
   const [email, setEmail] = useState('');
@@ -69,7 +70,9 @@ const PatientLogin = () => {
             <h2>Patient Login</h2>
             <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown}/>
             <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={handleKeyDown}/>
-            <button onClick={handleLogin}>Login</button>
+            <motion.button onClick={handleLogin}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.9 }}>Login</motion.button>
             {error && <p className={styles.errorMsg}>{error}</p>}
             <p className={styles.signup}>No Patient account? <Link href="/signup/patient">Sign Up as a Patient</Link></p>
           </div>
