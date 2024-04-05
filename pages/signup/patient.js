@@ -56,6 +56,7 @@ const SignUpPatient = () => {
       // Set email, login and showModal cookies upon successful signup
       Cookies.set('userEmail', email);
       Cookies.set('dbLocation', 'patients');
+      Cookies.set('dashboard', 'patient-dashboard');
       Cookies.set('showModal', true);
 
       // Redirect to patient dashboard or desired page

@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 const Navbar = () => {
   const userEmail = Cookies.get('userEmail');
   const collectionName = Cookies.get('dbLocation');
+  const dashboard = Cookies.get('dashboard');
 
   const [fullName, setFullName] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -53,6 +54,7 @@ const Navbar = () => {
       Cookies.remove('userEmail');
       Cookies.remove('dbLocation');
       Cookies.remove('showModal');
+      Cookies.remove('dashboard');
     } catch (error) {
       console.error('Error updating account:', error);
     }
@@ -63,7 +65,7 @@ const Navbar = () => {
       <nav className={styles.navMainContainer}>
         <ul>
           <li>
-            <Link className={styles.homepageLink} href="/">
+            <Link className={styles.homepageLink} href={userEmail != undefined ? dashboard : "/"}>
               <Image className={styles.logoImage} src={logo} alt='Medical Consultation Logo'/>
               Medical Consultation
             </Link>

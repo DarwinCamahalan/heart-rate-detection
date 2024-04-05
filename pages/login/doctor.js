@@ -32,6 +32,7 @@ const DoctorLogin = () => {
 
           Cookies.set('userEmail', email);
           Cookies.set('dbLocation', 'doctors');
+          Cookies.set('dashboard', 'doctor-dashboard');
           router.push('/doctor-dashboard');
 
           // Update the user document in the database to mark login as true

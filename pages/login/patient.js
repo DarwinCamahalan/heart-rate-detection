@@ -30,6 +30,7 @@ const PatientLogin = () => {
 
           Cookies.set('userEmail', email);
           Cookies.set('dbLocation', 'patients');
+          Cookies.set('dashboard', 'patient-dashboard');
           Cookies.set('showModal', false);
       
           // Update the user document in the database to mark login as true
