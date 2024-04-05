@@ -1,18 +1,23 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../components/Modal';
 import PatientForm from '../components/PatientForm';
 import { db } from '../firebaseConfig';
 import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
-import styles from '../styles/patientDashboard.module.scss'
+import styles from '../styles/patientDashboard.module.scss';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import heartLogo from '../public/bpm-card-image.png'
-import tempImage from '../public/tempImage.jpg'
+import heartLogo from '../public/bpm-card-image.png';
+import tempImage from '../public/tempImage.jpg';
+import { Scatter } from 'react-chartjs-2';
+import moment from 'moment';
+import 'chartjs-adapter-moment'; // Import Moment.js adapter for Chart.js
+import { Chart, LinearScale, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
+Chart.register(LinearScale, PointElement, Tooltip, Legend, TimeScale);
 
 const PatientDashboard = () => {
-  const [showModal, setShowModal] = useState(true); // Initialize with default value
+  const [showModal, setShowModal] = useState(true);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [age, setAge] = useState('');
@@ -24,16 +29,18 @@ const PatientDashboard = () => {
   const [email, setEmail] = useState('');
   const [formError, setFormError] = useState('');
   const [fullName, setFullName] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [bpmData, setBpmData] = useState({});
+  const [availableDates, setAvailableDates] = useState([]);
   const userEmail = Cookies.get('userEmail');
   const router = useRouter();
-  const cardTitle = ["X-Ray Camera", "Tumor Detection", "Cancer Detection"];
+  const cardTitle = ['X-Ray Camera', 'Tumor Detection', 'Cancer Detection'];
 
   useEffect(() => {
-    // Fetch patient data based on email from cookie
     const fetchPatientData = async () => {
       try {
         const patientCollectionRef = collection(db, 'patients');
-        const q = query(patientCollectionRef, where("email", "==", userEmail));
+        const q = query(patientCollectionRef, where('email', '==', userEmail));
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const patientDoc = querySnapshot.docs[0];
@@ -42,7 +49,17 @@ const PatientDashboard = () => {
           setUid(patientDoc.id);
           setRole(data.role);
           setAccountCreationInfo(data.createdOn);
-          setFullName(`${data.firstName} ${data.lastName}`)
+          setFullName(`${data.firstName} ${data.lastName}`);
+          setBpmData(data.bpm);
+          // Get the dates with available BPM data
+          const dates = Object.keys(data.bpm || {}).filter(date =>
+            Object.keys(data.bpm[date]).length > 0
+          );
+          setAvailableDates(dates);
+          // Set the default selected date to the first available date
+          if (dates.length > 0) {
+            setSelectedDate(dates[0]);
+          }
         } else {
           console.log('No patient data found for this email.');
         }
@@ -50,38 +67,35 @@ const PatientDashboard = () => {
         console.error('Error fetching patient data:', error);
       }
     };
-
+  
     if (userEmail) {
       fetchPatientData();
     } else {
       console.log('No patient email found in cookies.');
     }
-
-    // Check if the cookie exists and set the modal state accordingly
+  
     const showModalCookie = Cookies.get('showModal');
     if (showModalCookie !== undefined) {
       setShowModal(showModalCookie === 'true');
     }
   }, [userEmail]);
 
-  // Function to handle form submission
   const handleSubmit = async () => {
     try {
-      // Form validation
       if (!firstName || !lastName || !age || !birthday || !gender) {
         setFormError('Please fill in all fields.');
         return;
       }
 
-      // Update patient account with additional information
+      const parsedBirthday = moment(birthday, 'YYYY-MM-DD').toDate();
+
       await updateDoc(doc(db, 'patients', uid), {
         firstName,
         lastName,
         age,
-        birthday,
-        gender
+        birthday: parsedBirthday,
+        gender,
       });
-      // Close modal and reset form fields
       setShowModal(false);
       setFirstName('');
       setLastName('');
@@ -89,18 +103,21 @@ const PatientDashboard = () => {
       setBirthday('');
       setGender('');
       Cookies.set('showModal', false);
-      router.reload()
+      router.reload();
     } catch (error) {
       console.error('Error updating patient account:', error);
     }
   };
 
-  // Function to handle modal close
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
-  const handleKeyDown = (event) => {
+  const handleDateChange = event => {
+    setSelectedDate(event.target.value);
+  };
+
+  const handleKeyDown = event => {
     if (event.key === 'Enter') {
       handleSubmit();
     }
@@ -115,8 +132,17 @@ const PatientDashboard = () => {
             <div className={styles.topCard}>
               <div className={styles.mainCardContainer}>
                 <div className={styles.mainCard}>
-                  <Link href={"/heart-rate"}>
-                    <Image src={heartLogo} alt="Card Image"/>
+                  <Link href={'/heart-rate'}>
+                    <Image src={heartLogo} alt="Card Image" />
+                    <div className={styles.content}>
+                      <h2>Heart Rate Detection</h2>
+                      <p>Using Computer Vision, Patient Heart Rate will be determined using only a Camera.</p>
+                    </div>
+                  </Link>
+                </div>
+                <div className={styles.mainCard}>
+                  <Link href={'/heart-rate'}>
+                    <Image src={heartLogo} alt="Card Image" />
                     <div className={styles.content}>
                       <h2>Heart Rate Detection</h2>
                       <p>Using Computer Vision, Patient Heart Rate will be determined using only a Camera.</p>
@@ -124,15 +150,74 @@ const PatientDashboard = () => {
                   </Link>
                 </div>
               </div>
-              <div className={styles.bpmData}>TEST</div>
+              <div className={styles.bpmData}>
+                <select onChange={handleDateChange} className={styles.selectDate}>
+                  <option>Select Date</option>
+                  {availableDates.map(date => (
+                    <option key={date} value={date}>
+                      {date}
+                    </option>
+                  ))}
+                </select>
+                {bpmData[selectedDate] ? (
+                  <Scatter
+                    data={{
+                      datasets: [
+                        {
+                          label: 'BPM Data',
+                          data: Object.entries(bpmData[selectedDate]).map(([time, { bpmValue }]) => ({
+                            x: moment(time, 'HH:mm:ss').toDate(),
+                            y: bpmValue || 0,
+                          })),
+                          pointRadius: 6, // Adjust point radius for better visibility
+                          pointBackgroundColor: ctx => {
+                            const value = ctx.dataset.data[ctx.dataIndex].y;
+                            if (value >= 0 && value <= 40) {
+                              return 'rgb(162, 255, 0)';
+                            } else if (value >= 41 && value <= 70) {
+                              return 'rgb(82, 245, 0)';
+                            } else if (value >= 71 && value <= 90) {
+                              return 'rgb(255, 0, 195)';
+                            } else {
+                              return 'rgb(255, 0, 5)';
+                            }
+                          },
+                        },
+                      ],
+                    }}
+                    options={{
+                      scales: {
+                        x: {
+                          type: 'time',
+                          time: {
+                            unit: 'minute',
+                          },
+                          title: {
+                            display: true,
+                            text: 'Time',
+                          },
+                        },
+                        y: {
+                          title: {
+                            display: true,
+                            text: 'BPM Value',
+                          },
+                        },
+                      },
+                    }}
+                  />
+                ) : (
+                  <p className={styles.noData}>No available data for this date.</p>
+                )}
+              </div>
             </div>
             <hr />
             <span>Coming Soon</span>
             <div className={styles.comingCards}>
               {cardTitle.map((title, index) => (
                 <div key={index} className={styles.otherCard}>
-                  <Link href={"#"}>
-                    <Image src={tempImage} alt="Card Image"/>
+                  <Link href={'#'}>
+                    <Image src={tempImage} alt="Card Image" />
                     <div className={styles.content}>
                       <h2>{title}</h2>
                       <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet qui recusandae debitis!</p>

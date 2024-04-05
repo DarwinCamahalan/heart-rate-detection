@@ -1,0 +1,27 @@
+lastName: "lastname",
+firstNae: "firstname",
+age: 21,
+login: false,
+birthday: "2024-05-01",
+createdOn: "4/4/2024",
+email: "patient@account.com",
+gender: "male",
+role: "Patient",
+bpm: {
+    4/4/2024: {
+        8:13:32 PM: {
+            bpmValue: 79
+        },
+        8:12:32 PM: {
+            bpmValue: 75
+        }
+    },
+    4/5/2024: { 
+        7:00:32 PM: {
+            bpmValue: 69
+        },
+        8:12:32 PM: {
+            bpmValue: 89
+        }
+    }
+}

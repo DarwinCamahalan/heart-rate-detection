@@ -9,6 +9,7 @@ import hearBeat from '../public/heartbeat.gif';
 import Cookies from 'js-cookie';
 import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import moment from 'moment';
 
 export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
@@ -60,7 +61,7 @@ export default function HeartRate() {
   const handleSubmit = async () => {
     try {
       const currentDate = new Date().toLocaleDateString();
-      const currentTime = new Date().toLocaleTimeString();
+      const currentTime = moment().format('HH:mm:ss'); // Format time using moment
 
       if (!patientData) {
         console.error('Patient data not available.');
@@ -80,7 +81,7 @@ export default function HeartRate() {
         }
       };
 
-      await updateDoc(doc(db, 'patients', patientData.id), { // Use patientData.id as document ID
+      await updateDoc(doc(db, 'patients', patientData.id), {
         ...patientData,
         bpm: updatedBpm
       });
