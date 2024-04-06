@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
-import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore'; // Import collection function here
+import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
 import Link from 'next/link';
 import styles from './navBar.module.scss';
 import Image from 'next/image';
@@ -19,42 +19,53 @@ const Navbar = () => {
   const [uid, setUid] = useState('');
 
   useEffect(() => {
+
     const fetchAccountData = async () => {
+
       try {
         const patientCollectionRef = collection(db, collectionName === 'patients' ? 'patients' : 'doctors');
         const q = query(patientCollectionRef, where("email", "==", userEmail));
         const querySnapshot = await getDocs(q);
+        
         if (!querySnapshot.empty) {
           const patientDoc = querySnapshot.docs[0];
           const data = patientDoc.data();
           setFullName(`${data.firstName} ${data.lastName}`);
           setShowAccountName(data.login);
           setUid(patientDoc.id);
+
         } else {
           console.log('No account data found for this email.');
         }
+
       } catch (error) {
         console.error('Error fetching account data:', error);
       }
+
     };
 
     if (userEmail) {
       fetchAccountData();
+
     } else {
       console.log('No account email found in cookies.');
     }
+
   }, [userEmail, collectionName]);
 
   const handleLogout = async () => {
+
     try {
       await updateDoc(doc(db, collectionName === 'patients' ? 'patients' : 'doctors', uid), {
         login: false
       });
+
       window.location.href = '/';
       Cookies.remove('userEmail');
       Cookies.remove('dbLocation');
       Cookies.remove('showModal');
       Cookies.remove('dashboard');
+
     } catch (error) {
       console.error('Error updating account:', error);
     }
@@ -70,23 +81,32 @@ const Navbar = () => {
               Medical Consultation
             </Link>
           </li>
+
           {showAccountName ? 
             <li className={styles.accountLogout} onMouseOver={() => setShowDropdown(true)}>
+
               {fullName} <span className={styles.arrowDown}>►</span>
     
               {showDropdown && 
                 <div className={styles.accountDropdown} onMouseLeave={() => setShowDropdown(false)}>
+
                   <span><Link href="#">My Account</Link></span>
+
                   <hr />
+
                   <span onClick={(()=>{setShowConfirmation(true)})}>
                     Logout
                   </span>
+
                 </div>
               }
             </li>
+
           : null}
         </ul>
+
       </nav>
+
       {showConfirmation ? 
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
@@ -104,8 +124,8 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-      : null}
 
+      : null}
     </>
   );
 };

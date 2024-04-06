@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
+import { motion } from "framer-motion"
 import Link from 'next/link';
 import Head from 'next/head';
 import Cookies from 'js-cookie';
 import styles from './login.module.scss'
-import { motion } from "framer-motion"
 
 const PatientLogin = () => {
   const [email, setEmail] = useState('');
@@ -21,11 +21,12 @@ const PatientLogin = () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'patients'));
       let validUser = false;
-      const updatePromises = []; // Array to store promises for document updates
+      const updatePromises = [];
   
       querySnapshot.forEach((docSnapshot) => {
         const userData = docSnapshot.data();
-        const docId = docSnapshot.id; // Access the document ID
+        const docId = docSnapshot.id;
+
         if (userData.email === email && userData.password === password && userData.role === 'Patient') {
           validUser = true;
 
@@ -34,23 +35,22 @@ const PatientLogin = () => {
           Cookies.set('dashboard', 'patient-dashboard');
           Cookies.set('showModal', false);
       
-          // Update the user document in the database to mark login as true
-          const userDocRef = doc(db, 'patients', docId); // Use docId here
+          const userDocRef = doc(db, 'patients', docId);
           updatePromises.push(updateDoc(userDocRef, { login: true }));
         }
       });
       
-      // Wait for all update operations to complete
       await Promise.all(updatePromises);
   
       if (validUser) {
         window.location.href = '/patient-dashboard';
+
       } else {
         setError('Invalid Credentials for Patient.');
       }
+
     } catch (error) {
       setError('Error logging in. Please try again.');
-      console.log(error)
     }
   };
   
@@ -61,10 +61,15 @@ const PatientLogin = () => {
   };
 
   return (
-    <>
+    <motion.div
+    initial={{ opacity: 0}}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5 }}>
+
       <Head>
         <title>Patient Login</title>
       </Head>
+      
       <div className={styles.mainContainer}>
           <div className={styles.loginForm}>
             <h2>Patient Login</h2>
@@ -77,7 +82,7 @@ const PatientLogin = () => {
             <p className={styles.signup}>No Patient account? <Link href="/signup/patient">Sign Up as a Patient</Link></p>
           </div>
       </div>
-    </>
+    </motion.div>
   );
 };
 

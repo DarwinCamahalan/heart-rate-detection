@@ -21,16 +21,17 @@ const PatientForm = ({
   handleSubmit,
   handleKeyDown
 }) => {
+
   const handleAgeChange = (e) => {
-    // Ensure age is a non-negative number
     const inputAge = parseInt(e.target.value);
+
     if (!isNaN(inputAge) && inputAge >= 0) {
       setAge(inputAge);
     }
+
   };
 
   const handleNameChange = (e, setter) => {
-    // Ensure only alphabets and spaces are entered for first and last name
     const name = e.target.value.replace(/[^A-Za-z\s]/g, '');
     setter(name);
   };
@@ -41,8 +42,8 @@ const PatientForm = ({
         <div className={styles.formControl}>
           <div className={styles.activeForm}>
             <h2>Complete Profile</h2>
-            <input type="text" placeholder="First Name" value={firstName} onChange={(e) => handleNameChange(e, setFirstName)} onKeyDown={handleKeyDown} />
-            <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => handleNameChange(e, setLastName)} onKeyDown={handleKeyDown} />
+            <input style={{textTransform: 'capitalize'}} type="text" placeholder="First Name" value={firstName} onChange={(e) => handleNameChange(e, setFirstName)} onKeyDown={handleKeyDown} />
+            <input style={{textTransform: 'capitalize'}} type="text" placeholder="Last Name" value={lastName} onChange={(e) => handleNameChange(e, setLastName)} onKeyDown={handleKeyDown} />
             <input type="number" placeholder="Age" value={age} onChange={handleAgeChange} onKeyDown={handleKeyDown} />
             <input type="date" placeholder="Birthday" value={birthday} onChange={(e) => setBirthday(e.target.value)} onKeyDown={handleKeyDown} />
             <select value={gender} onChange={(e) => setGender(e.target.value)}>

@@ -1,20 +1,20 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
+import { motion } from "framer-motion"
+import { useRouter } from 'next/router'
 import Head from 'next/head';
 import styles from './login.module.scss';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
-import { motion } from "framer-motion"
 
 const DoctorLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
-
+  const router = useRouter()
   const handleLogin = async () => {
+
     if (!email || !password) {
       setError('Enter Email or Password');
       return;
@@ -23,31 +23,32 @@ const DoctorLogin = () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'doctors'));
       let validUser = false;
-      const updatePromises = []; // Array to store promises for document updates
+      const updatePromises = [];
 
       querySnapshot.forEach((docSnapshot) => {
         const userData = docSnapshot.data();
-        const docId = docSnapshot.id; // Access the document ID
+        const docId = docSnapshot.id;
+
         if (userData.email === email && userData.password === password) {
           validUser = true;
 
           Cookies.set('userEmail', email);
           Cookies.set('dbLocation', 'doctors');
           Cookies.set('dashboard', 'doctor-dashboard');
-          router.push('/doctor-dashboard');
-
-          // Update the user document in the database to mark login as true
-          const userDocRef = doc(db, 'doctors', docId); // Use docId here
+          const userDocRef = doc(db, 'doctors', docId);
           updatePromises.push(updateDoc(userDocRef, { login: true }));
+
+          router.push('/doctor-dashboard') 
+
         }
       });
 
-      // Wait for all update operations to complete
       await Promise.all(updatePromises);
 
       if (!validUser) {
         setError('Invalid Credentials for Doctor.');
       }
+
     } catch (error) {
       setError('Error logging in. Please try again.');
     }
@@ -57,13 +58,19 @@ const DoctorLogin = () => {
     if (event.key === 'Enter') {
       handleLogin();
     }
+
   };
 
   return (
-    <>
+    <motion.div
+    initial={{ opacity: 0}}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5 }}>
+
       <Head>
         <title>Doctor Login</title>
       </Head>
+
       <div className={styles.mainContainer}>
         <div className={styles.loginForm}>
           <h2>Doctor Login</h2>
@@ -76,7 +83,7 @@ const DoctorLogin = () => {
           <p className={styles.signup}>No Doctor account? <Link href="/">Contact Administrator</Link></p>
         </div>
       </div>
-    </>
+    </motion.div>
   );
 };
 

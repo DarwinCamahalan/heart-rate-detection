@@ -17,6 +17,7 @@
 
         .formControl{
             display: flex;
+
             .activeForm{
                 width: 100%;
                 display: flex;
@@ -37,8 +38,6 @@
                 }
             }
         }
-
-
 
         h2{
             margin-bottom: 1em;

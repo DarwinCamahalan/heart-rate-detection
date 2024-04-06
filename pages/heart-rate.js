@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
+import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import Head from 'next/head';
 import io from 'socket.io-client';
 import styles from '../styles/heartRate.module.scss'
-import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import Image from 'next/image';
 import hearBeat from '../public/heartbeat.gif';
 import Cookies from 'js-cookie';
-import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
 import moment from 'moment';
 
 export default function HeartRate() {
@@ -24,28 +24,35 @@ export default function HeartRate() {
     socket.on('bpm_update', ({ bpm, bufferIndex }) => {
       setBpm(bpm);
       setBufferIndex(bufferIndex);
+
       if (bufferIndex === 149) {
         setShowFinalBpm(true);
         setFinalBpm(bpm);
       }
+
     });
 
     const fetchPatientData = async () => {
       try {
         const userEmail = Cookies.get('userEmail');
+        
         if (userEmail) {
           const q = query(collection(db, 'patients'), where("email", "==", userEmail));
           const querySnapshot = await getDocs(q);
+
           if (!querySnapshot.empty) {
             const patientDoc = querySnapshot.docs[0];
             const data = patientDoc.data();
-            setPatientData({ ...data, id: patientDoc.id }); // Include document ID in patientData state
+            setPatientData({ ...data, id: patientDoc.id });
+
           } else {
             console.log('No patient data found for this email.');
           }
+
         } else {
           console.log('No patient email found in cookies.');
         }
+
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
@@ -56,12 +63,13 @@ export default function HeartRate() {
     return () => {
       socket.disconnect();
     };
+
   }, []);
 
   const handleSubmit = async () => {
     try {
       const currentDate = new Date().toLocaleDateString();
-      const currentTime = moment().format('HH:mm:ss'); // Format time using moment
+      const currentTime = moment().format('HH:mm:ss');
 
       if (!patientData) {
         console.error('Patient data not available.');
@@ -88,8 +96,6 @@ export default function HeartRate() {
 
       window.location.href = '/patient-dashboard';
 
-      // Additional logic after submitting BPM data can be added here
-
     } catch (error) {
       console.error('Error submitting BPM:', error);
     }
@@ -103,6 +109,7 @@ export default function HeartRate() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
+
       <div className={styles.mainContainer}>
         {showFinalBpm ? (
           <div className={styles.modalBPM}>
@@ -113,16 +120,17 @@ export default function HeartRate() {
                 <button onClick={handleSubmit}>Submit</button>
                 <button onClick={(()=>{window.location.href = '/heart-rate';})}>Try Again</button>
                 </div>
-              
             </div>
           </div>
           
         ) : (
+
           <div className={styles.showCard}>
             <div className={styles.videoContainer}>
               <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
               <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
             </div>
+
             <div className={styles.bpmCounter}>
               <CircularProgressbarWithChildren className={styles.progressBar} value={bufferIndex}
                 styles={buildStyles({
@@ -135,9 +143,11 @@ export default function HeartRate() {
                   trailColor: '#ffebeb',
                 })}
               >
-                <Image src={hearBeat} alt='Heart Beat' />
-                <span>{bpm}</span>
+              
+              <Image src={hearBeat} alt='Heart Beat' />
+              <span>{bpm}</span>
               </CircularProgressbarWithChildren>
+              
             </div>
           </div>
         )}
