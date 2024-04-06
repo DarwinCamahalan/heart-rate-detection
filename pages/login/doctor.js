@@ -69,6 +69,9 @@ const DoctorLogin = () => {
 
       <Head>
         <title>Doctor Login</title>
+        <meta name="description" content="A Computer Vision project that detects a person's Heart Rate Per Minute (BPM) for medical consultation data gathering" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
       <div className={styles.mainContainer}>
