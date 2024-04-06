@@ -8,22 +8,12 @@ a{
   text-decoration: none;
 }
 
+body{
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
 /* width */
 ::-webkit-scrollbar {
-  width: 5px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #d3e2fb;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #0452ce;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #1e008b;
+  display: none;  /* Safari and Chrome */
 }

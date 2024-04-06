@@ -1,0 +1,71 @@
+.mainContainer{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+
+    .modalBackground{
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.688);
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal{
+        z-index: 5;
+        width: 70%;
+        height: auto;
+        background-color: white;
+        box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
+        border-radius: 1em;
+        border: 1px solid rgb(219, 219, 219);
+
+        .tabs{
+            width: 100%;
+            display: flex;
+            border-bottom: 1px solid rgb(228, 228, 228);
+
+            span{
+                margin-right: 1em;
+                border-bottom: 0.2em solid #ffffff00;
+                padding: 1em;
+                
+                &:first-child{
+                    border-radius: 1em 0 0 0;
+                }
+
+                &:hover{
+                    background-color: rgb(244, 244, 244);
+                    cursor: pointer;
+                    border-bottom: 0.2em solid #0452ce;
+                }
+            }
+        }
+
+        select{
+            padding: 0.3em 0.5em;
+            margin-left: 2em;
+            margin-top: 1.5em;
+            border-radius: 0.3em;
+        }
+
+        .graphs{
+            padding: 1em !important;
+        }
+
+        .noData{
+            height: 77.2vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

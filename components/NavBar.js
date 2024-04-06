@@ -8,6 +8,7 @@ import Image from 'next/image';
 import logo from '../public/logo.png';
 import Cookies from 'js-cookie';
 import BpmRecords from './BpmRecords';
+import DisplayGraphs from './DisplayGraphs';
 
 const Navbar = () => {
   const userEmail = Cookies.get('userEmail');
@@ -19,7 +20,8 @@ const Navbar = () => {
   const [showAccountName, setShowAccountName] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [uid, setUid] = useState('');
-  const [showTable, setShowTable] = useState(false); // State to manage table visibility
+  const [showTable, setShowTable] = useState(false);
+  const [showGraphs, setShowGraphs] = useState(false);
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -71,9 +73,13 @@ const Navbar = () => {
     }
   };
 
-  // Function to toggle table visibility
+
   const toggleTableVisibility = () => {
     setShowTable(prevState => !prevState);
+  };
+
+  const toggleGraphsVisibility = () => {
+    setShowGraphs(prevState => !prevState);
   };
 
   return (
@@ -94,9 +100,9 @@ const Navbar = () => {
               {dashboard == 'patient-dashboard' ? 
                   <>
                   <div className={styles.navigation}>
-                      <span>Schedule Checkup</span>
                       <span onClick={toggleTableVisibility}>BPM Records</span>
-                      <span>Graphs</span>
+                      <span onClick={toggleGraphsVisibility}>Graphs</span>
+                      <span>Schedule Checkup</span>
                   </div>
   
                   <div className={styles.bell}>
@@ -154,7 +160,9 @@ const Navbar = () => {
 
       : null}
 
-      <BpmRecords showTable={showTable} setShowTable={setShowTable} /> {/* Pass showTable state and setShowTable function as props */}
+      <BpmRecords showTable={showTable} setShowTable={setShowTable} />
+
+      <DisplayGraphs showGraphs ={showGraphs} setShowGraphs={setShowGraphs}/>
     </>
   );
 };

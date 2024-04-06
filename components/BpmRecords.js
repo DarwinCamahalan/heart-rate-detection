@@ -69,7 +69,14 @@ const BpmRecords = ({ showTable, setShowTable }) => {
     columns,
     data: formattedData,
     initialState: { density: 'compact' },
-    enableDensityToggle: false
+    enableDensityToggle: false,
+    muiTablePaperProps: {
+      sx: {
+        borderRadius: '16px',
+        paddingLeft: '20px',
+        paddingRight: '20px'
+      },
+    },
   });
 
   // Function to hide the table
@@ -89,7 +96,7 @@ const BpmRecords = ({ showTable, setShowTable }) => {
          <div className={styles.tableClose} onClick={hideTable}></div>
 
           <div className={styles.tableContainer}>
-            <MaterialReactTable table={table} density='compact'/>
+            <MaterialReactTable table={table} />
           </div>
 
         </motion.div>

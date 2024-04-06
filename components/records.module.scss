@@ -11,10 +11,14 @@
     
     .tableClose{
         position: absolute;
-        background-color: rgba(0, 0, 0, 0.899);
+        background-color: rgba(0, 0, 0, 0.688);
         width: 100%;
-        height: 1000%;
+        height: 100%;
     } 
+
+    .tableContainer{
+        z-index: 2;
+    }
 }
 
 

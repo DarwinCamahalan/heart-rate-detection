@@ -40,7 +40,6 @@
            display: flex;
            justify-content: flex-end;
            align-items: center;
-           margin-right: 1em;
            text-transform: capitalize;
 
             .navigation{
@@ -80,7 +79,7 @@
 
             .accountDropdown{
                 position: relative; 
-                width: 27%;
+                width: 40%;
                 font-size: 0.95em;
 
                 &:hover{
@@ -91,8 +90,8 @@
                     border: 1px solid rgb(235, 234, 234);
                     border-radius: 0.5em;
                     position: absolute;
-                    top: 1.8em;
-                    right: 3em;
+                    top: 2em;
+                    right: 33%;
                     background-color: white;
                     box-shadow: 0px 2px 12px -5px rgba(0,0,0,0.25);
                     display: flex;
