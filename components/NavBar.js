@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
+import {motion} from 'framer-motion'
 import Link from 'next/link';
 import styles from './navBar.module.scss';
 import Image from 'next/image';
 import logo from '../public/logo.png';
 import Cookies from 'js-cookie';
+import BpmRecords from './BpmRecords';
 
 const Navbar = () => {
   const userEmail = Cookies.get('userEmail');
@@ -17,11 +19,10 @@ const Navbar = () => {
   const [showAccountName, setShowAccountName] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [uid, setUid] = useState('');
+  const [showTable, setShowTable] = useState(false); // State to manage table visibility
 
   useEffect(() => {
-
     const fetchAccountData = async () => {
-
       try {
         const patientCollectionRef = collection(db, collectionName === 'patients' ? 'patients' : 'doctors');
         const q = query(patientCollectionRef, where("email", "==", userEmail));
@@ -54,7 +55,6 @@ const Navbar = () => {
   }, [userEmail, collectionName]);
 
   const handleLogout = async () => {
-
     try {
       await updateDoc(doc(db, collectionName === 'patients' ? 'patients' : 'doctors', uid), {
         login: false
@@ -69,6 +69,11 @@ const Navbar = () => {
     } catch (error) {
       console.error('Error updating account:', error);
     }
+  };
+
+  // Function to toggle table visibility
+  const toggleTableVisibility = () => {
+    setShowTable(prevState => !prevState);
   };
 
   return (
@@ -89,13 +94,13 @@ const Navbar = () => {
               {dashboard == 'patient-dashboard' ? 
                   <>
                   <div className={styles.navigation}>
-                      <Link href={'#'}>Schedule Checkup</Link>
-                      <Link href={'#'}>BPM Records</Link>
-                      <Link href={'#'} >Graphs</Link>
+                      <span>Schedule Checkup</span>
+                      <span onClick={toggleTableVisibility}>BPM Records</span>
+                      <span>Graphs</span>
                   </div>
   
                   <div className={styles.bell}>
-                    <li className={styles.bellIcon}>&#128365;</li>
+                    <span className={styles.bellIcon}>&#128365;</span>
                   </div>
                 </>
               : null}
@@ -126,7 +131,11 @@ const Navbar = () => {
       </nav>
 
       {showConfirmation ? 
-        <div className={styles.modalOverlay}>
+        <motion.div className={styles.modalOverlay}
+        initial={{ opacity: 0}}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}>
+
           <div className={styles.modal}>
             <div className={styles.modalContent}>
               <h1>Confirmation</h1>
@@ -141,9 +150,11 @@ const Navbar = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
       : null}
+
+      <BpmRecords showTable={showTable} setShowTable={setShowTable} /> {/* Pass showTable state and setShowTable function as props */}
     </>
   );
 };
