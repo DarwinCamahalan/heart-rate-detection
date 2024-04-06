@@ -70,13 +70,14 @@ const Navbar = () => {
       console.error('Error updating account:', error);
     }
   };
+  console.log(userEmail)
 
   return (
     <>
       <nav className={styles.navMainContainer}>
         <ul>
           <li>
-            <Link className={styles.homepageLink} href={userEmail != undefined ? dashboard : "/"}>
+            <Link className={styles.homepageLink} href={userEmail ? dashboard : "/"}>
               <Image className={styles.logoImage} src={logo} alt='Medical Consultation Logo'/>
               Medical Consultation
             </Link>
