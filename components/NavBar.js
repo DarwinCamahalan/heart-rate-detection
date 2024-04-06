@@ -83,23 +83,41 @@ const Navbar = () => {
           </li>
 
           {showAccountName ? 
-            <li className={styles.accountLogout} onMouseOver={() => setShowDropdown(true)}>
+          
+            <li className={styles.navText} >
 
-              {fullName} <span className={styles.arrowDown}>►</span>
-    
-              {showDropdown && 
-                <div className={styles.accountDropdown} onMouseLeave={() => setShowDropdown(false)}>
+              {dashboard == 'patient-dashboard' ? 
+                  <>
+                  <div className={styles.navigation}>
+                      <Link href={'#'}>Schedule Checkup</Link>
+                      <Link href={'#'}>BPM Records</Link>
+                      <Link href={'#'} >Graphs</Link>
+                  </div>
+  
+                  <div className={styles.bell}>
+                    <li className={styles.bellIcon}>&#128365;</li>
+                  </div>
+                </>
+              : null}
 
-                  <span><Link href="#">My Account</Link></span>
+              <div className={styles.accountDropdown} onMouseOver={() => setShowDropdown(true)}>
 
-                  <hr />
+                {fullName} <span>▼</span>
+      
+                {showDropdown && 
+                  <div className={styles.accountDropdown} onMouseLeave={() => setShowDropdown(false)}>
 
-                  <span onClick={(()=>{setShowConfirmation(true)})}>
-                    Logout
-                  </span>
+                    <span><Link href="#">My Account</Link></span>
 
-                </div>
-              }
+                    <hr />
+
+                    <span onClick={(()=>{setShowConfirmation(true)})}>
+                      Logout
+                    </span>
+
+                  </div>
+                }
+              </div>
             </li>
 
           : null}

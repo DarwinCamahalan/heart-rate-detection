@@ -35,59 +35,96 @@
             }
         }
 
-        .accountLogout{
+        .navText{
+           width: 100%;
            display: flex;
            justify-content: flex-end;
-           margin-right: 3em;
-           position: relative; 
+           align-items: center;
+           margin-right: 1em;
            text-transform: capitalize;
 
-            &:hover{
-                cursor: pointer;
-            }
-
-           .arrowDown{
-            margin-left: 0.3em;
-            transform: rotate(90deg);
-           }
-
-           .accountDropdown{
-            width: 8em;
-            border: 1px solid rgb(235, 234, 234);
-            border-radius: 0.5em;
-            position: absolute;
-            top: 1.8em;
-            background-color: white;
-            box-shadow: 0px 2px 12px -5px rgba(0,0,0,0.25);
-            display: flex;
-            flex-direction: column;
-            padding: 0.8em 1em;
-
-            span{
-                margin: 0.5em 0;
-                margin-left: 0.3em;
-                font-size: 1em;
-
-                &:hover{
-                    color: rgb(222, 0, 56);
-                }
-
+            .navigation{
+                display: flex;
+                align-items: center;
+                width: 100%;
+                
                 a{
-                    font-size: 1em;
-                    display: block;
+                    width: auto;
+                    margin-right: 1.3em;
+                    font-size: 0.9em;
                     font-weight: normal;
-
+                    transition: 150ms;
                     &:hover{
+                        cursor: pointer;
                         color: #0452ce;
+                        transform: scale(1.02);
                     }
                 }
             }
 
-            hr{
-                border: 1px solid rgb(235, 234, 234);
+            .bell{
+                width: auto;
+                margin-right: 1.5em;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                .bellIcon{  
+                    font-weight: bolder;
+                    font-size: 1.5em;
+                    &:hover{
+                        cursor: pointer;
+                    }
+                }
             }
 
-           }
+            .accountDropdown{
+                position: relative; 
+                width: 27%;
+                font-size: 0.95em;
+
+                &:hover{
+                    cursor: pointer;
+                }
+                   .accountDropdown{
+                    width: 8em;
+                    border: 1px solid rgb(235, 234, 234);
+                    border-radius: 0.5em;
+                    position: absolute;
+                    top: 1.8em;
+                    right: 3em;
+                    background-color: white;
+                    box-shadow: 0px 2px 12px -5px rgba(0,0,0,0.25);
+                    display: flex;
+                    flex-direction: column;
+                    padding: 0.8em 1em;
+        
+                    span{
+                        margin: 0.5em 0;
+                        margin-left: 0.3em;
+                        font-size: 1em;
+        
+                        &:hover{
+                            color: rgb(222, 0, 56);
+                        }
+        
+                        a{
+                            font-size: 1em;
+                            display: block;
+                            font-weight: normal;
+        
+                            &:hover{
+                                color: #0452ce;
+                            }
+                        }
+                    }
+        
+                    hr{
+                        border: 1px solid rgb(235, 234, 234);
+                    }
+        
+                   }
+            }
         }
     }
 }
