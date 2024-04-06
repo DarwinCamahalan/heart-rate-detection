@@ -74,46 +74,79 @@
         justify-content: center;
         align-items: center;
 
+        img{
+            width: 27em;
+            height: auto;
+            position: absolute;
+            z-index: 2;
+        }
+
         .displayBPM{
-            background-color: white;
-            border: 1px solid rgb(228, 228, 228);
-            box-shadow: 0px 0px 32px -19px rgba(0,0,0,0.75);
-            border-radius: 0.5em;
-            padding: 2em;
+            width: 20em;
+            height: 31em;
+            background-image: url('../public/paper.svg');
+            background-size: cover;
+            z-index: 3;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            
+            padding: 1em 2em 1em 1em;
+            transition: 200ms;
             p{
-                font-size: 1.8em;
-                font-weight: bold;
+                font-size: 2.7em;
+                font-weight: bolder;
+                font-family: monospace;
             }
             
-            span{
-                font-size: 8em;
+            h5{
+                font-size: 11em;
                 font-weight: bolder;
-                color: #0452ce;
-                margin: 0.1em 0;
+                color: rgb(0, 177, 0);
+                font-family: monospace;
             }
 
             button{
-                background-color: #1cd10b;
-                color: white;
+                background-color: transparent;
                 border: 0;
-                border-radius: 0.5em;
-                padding: 1em 2em;
-                font-size: 1em;
+                padding: 0;
+                font-size: 1.6em;
                 font-weight: bold;
+                font-family: monospace;
 
                 &:hover{
                     cursor: pointer;
+                    border-bottom: 1px solid rgb(0, 177, 0);
+                }
+
+                span{
+                    display: none;
+                    color: rgb(0, 177, 0);
+                }
+                
+                &:first-child{
+                    margin-right: 2em;
+                    &:hover{
+                        color: rgb(0, 177, 0);
+                        span{
+                            display: initial;
+                            font-size: 1.2em;
+                        }
+
+                    }
                 }
 
                 &:last-child{
-                    margin-left: 1em;
-                    background-color: #d10b0b;
+                    &:hover{
+                        color: red;
+                        span{
+                            color: red;
+                            display: initial;
+                            font-size: 1.2em;
+                        }
+                    }
                 }
+
             }
         }
     }

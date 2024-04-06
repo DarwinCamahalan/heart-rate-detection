@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Chart, LinearScale, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
+import {motion} from 'framer-motion'
 Chart.register(LinearScale, PointElement, Tooltip, Legend, TimeScale);
 import { Scatter } from 'react-chartjs-2';
 import Cookies from 'js-cookie';
@@ -66,9 +67,16 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
     return (
         <>
             {showGraphs && (
-                <div className={styles.mainContainer}>
+                <motion.div className={styles.mainContainer}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}>
+
                     <div className={styles.modalBackground} onClick={handleModalClick}>
-                        <div className={styles.modal}>
+                        <motion.div className={styles.modal}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}>
 
                             <div className={styles.tabs}>
                                 <span>Daily</span>
@@ -136,9 +144,9 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                             ) : (
                                 <p className={styles.noData}>No available data for this date.</p>
                             )}
-                        </div>
+                        </motion.div>
                     </div>
-                </div>
+                </motion.div>
             )}
         </>
     )

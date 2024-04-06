@@ -3,13 +3,14 @@ import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/fire
 import { db } from '../firebaseConfig';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import Head from 'next/head';
-import io from 'socket.io-client';
-import styles from '../styles/heartRate.module.scss'
+import styles from '../styles/heartRate.module.scss';
 import 'react-circular-progressbar/dist/styles.css';
 import Image from 'next/image';
 import hearBeat from '../public/heartbeat.gif';
 import Cookies from 'js-cookie';
 import moment from 'moment';
+import io from 'socket.io-client';
+import paper from '../public/paper.svg'
 
 export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
@@ -29,13 +30,12 @@ export default function HeartRate() {
         setShowFinalBpm(true);
         setFinalBpm(bpm);
       }
-
     });
 
     const fetchPatientData = async () => {
       try {
         const userEmail = Cookies.get('userEmail');
-        
+
         if (userEmail) {
           const q = query(collection(db, 'patients'), where("email", "==", userEmail));
           const querySnapshot = await getDocs(q);
@@ -44,15 +44,12 @@ export default function HeartRate() {
             const patientDoc = querySnapshot.docs[0];
             const data = patientDoc.data();
             setPatientData({ ...data, id: patientDoc.id });
-
           } else {
             console.log('No patient data found for this email.');
           }
-
         } else {
           console.log('No patient email found in cookies.');
         }
-
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
@@ -95,7 +92,6 @@ export default function HeartRate() {
       });
 
       window.location.href = '/patient-dashboard';
-
     } catch (error) {
       console.error('Error submitting BPM:', error);
     }
@@ -104,7 +100,7 @@ export default function HeartRate() {
   return (
     <>
       <Head>
-        <title>Hear Rate Detection</title>
+        <title>Heart Rate Detection</title>
         <meta name="description" content="A Computer Vision project that detects a person's Heart Rate Per Minute (BPM) for medical consultation data gathering" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/png" href="/favicon.png" />
@@ -114,17 +110,15 @@ export default function HeartRate() {
         {showFinalBpm ? (
           <div className={styles.modalBPM}>
             <div className={styles.displayBPM}>
-              <p>Your BPM</p>
-              <span>{finalBpm}</span>
+              <p>BPM</p>
+              <h5>{finalBpm}</h5>
               <div className={styles.buttons}>
-                <button onClick={handleSubmit}>Submit</button>
-                <button onClick={(()=>{window.location.href = '/heart-rate';})}>Try Again</button>
-                </div>
+                <button onClick={handleSubmit}><span>&#128505;</span> Submit</button>
+                <button onClick={() => { window.location.href = '/heart-rate'; }}> <span>&#128505;</span> Retry</button>
+              </div>
             </div>
           </div>
-          
         ) : (
-
           <div className={styles.showCard}>
             <div className={styles.videoContainer}>
               <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
@@ -143,11 +137,9 @@ export default function HeartRate() {
                   trailColor: '#ffebeb',
                 })}
               >
-              
-              <Image src={hearBeat} alt='Heart Beat' />
-              <span>{bpm}</span>
+                <Image src={hearBeat} alt='Heart Beat' />
+                <span>{bpm}</span>
               </CircularProgressbarWithChildren>
-              
             </div>
           </div>
         )}
