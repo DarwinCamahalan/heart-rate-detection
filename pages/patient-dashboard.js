@@ -61,7 +61,8 @@ const PatientDashboard = () => {
           );
           setAvailableDates(dates);
           if (dates.length > 0) {
-            setSelectedDate(dates[0]);
+            const sortedDates = dates.sort((a, b) => moment(b, 'MM/DD/YYYY').diff(moment(a, 'MM/DD/YYYY')));
+            setSelectedDate(sortedDates[0]);
           }
         } else {
           console.log('No patient data found for this email.');

@@ -8,7 +8,7 @@ email: "patient@account.com",
 gender: "male",
 role: "Patient",
 bpm: {
-    4/4/2024: {
+    4/5/2024: {
         8:13:32 PM: {
             bpmValue: 79
         },
@@ -16,7 +16,15 @@ bpm: {
             bpmValue: 75
         }
     },
-    4/5/2024: { 
+    4/6/2024: { 
+        7:00:32 PM: {
+            bpmValue: 69
+        },
+        8:12:32 PM: {
+            bpmValue: 89
+        }
+    },
+    4/7/2024: { 
         7:00:32 PM: {
             bpmValue: 69
         },
