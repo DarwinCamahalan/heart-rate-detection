@@ -99,14 +99,14 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                             pointBackgroundColor: ctx => {
                                 const value = ctx.dataset.data[ctx.dataIndex].y;
                                 if (value >= 0 && value <= 40) {
-                                    return 'rgb(162, 255, 0)';
-                                } else if (value >= 41 && value <= 70) {
-                                    return 'rgb(82, 245, 0)';
-                                } else if (value >= 71 && value <= 90) {
-                                    return 'rgb(255, 0, 195)';
-                                } else {
-                                    return 'rgb(255, 0, 5)';
-                                }
+                                    return '#eefa05';
+                                  } else if (value >= 41 && value <= 70) {
+                                      return '#2afa05';
+                                  } else if (value >= 71 && value <= 90) {
+                                      return '#fc0303';
+                                  } else {
+                                      return '#0452ce';
+                                  }
                             },
                         },
                     ],
@@ -150,10 +150,10 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                                 data: weeklyData.map(({ date, avgBpm }) => ({
                                     x: moment(date, 'MM/DD/YYYY').toDate(),
                                     y: avgBpm,
-                                    color: avgBpm <= 40 ? 'rgb(162, 255, 0)' :
-                                           avgBpm <= 70 ? 'rgb(82, 245, 0)' :
-                                           avgBpm <= 90 ? 'rgb(255, 0, 195)' :
-                                                          'rgb(255, 0, 5)'
+                                    color: avgBpm <= 40 ? '#eefa05' :
+                                           avgBpm <= 70 ? '#2afa05' :
+                                           avgBpm <= 90 ? '#fc0303' :
+                                                          '#0452ce'
                                 })),
                                 pointRadius: 6,
                                 pointBackgroundColor: ctx => ctx.dataset.data.map(point => point.color)
@@ -202,10 +202,10 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                                 data: monthlyData.map(({ month, avgBpm }) => ({
                                     x: moment(month, 'MM/YYYY').toDate(),
                                     y: avgBpm,
-                                    color: avgBpm <= 40 ? 'rgb(162, 255, 0)' :
-                                           avgBpm <= 70 ? 'rgb(82, 245, 0)' :
-                                           avgBpm <= 90 ? 'rgb(255, 0, 195)' :
-                                                        'rgb(255, 0, 5)'
+                                    color: avgBpm <= 40 ? '#eefa05' :
+                                           avgBpm <= 70 ? '#2afa05' :
+                                           avgBpm <= 90 ? '#fc0303' :
+                                                          '#0452ce'
                                 })),
                                 pointRadius: 6,
                                 pointBackgroundColor: ctx => ctx.dataset.data.map(point => point.color)

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
+import {motion} from'framer-motion'
 import Head from 'next/head';
 import styles from '../styles/heartRate.module.scss';
 import 'react-circular-progressbar/dist/styles.css';
@@ -10,7 +11,6 @@ import hearBeat from '../public/heartbeat.gif';
 import Cookies from 'js-cookie';
 import moment from 'moment';
 import io from 'socket.io-client';
-import paper from '../public/paper.svg'
 
 export default function HeartRate() {
   const [bpm, setBpm] = useState(0);
@@ -106,14 +106,16 @@ export default function HeartRate() {
       <div className={styles.mainContainer}>
         {showFinalBpm ? (
           <div className={styles.modalBPM}>
-            <div className={styles.displayBPM}>
+            <motion.div className={styles.displayBPM}
+              animate={{ y: 20 }}
+              transition={{ type: "spring", stiffness: 1000 }}>
               <p>BPM</p>
               <h5>{finalBpm}</h5>
               <div className={styles.buttons}>
                 <button onClick={handleSubmit}><span>&#128505;</span> Submit</button>
                 <button onClick={() => { window.location.href = '/heart-rate'; }}> <span>&#120;</span> Retry</button>
               </div>
-            </div>
+            </motion.div>
           </div>
         ) : (
           <div className={styles.showCard}>

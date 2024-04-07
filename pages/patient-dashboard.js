@@ -191,13 +191,13 @@ const PatientDashboard = () => {
                           pointBackgroundColor: ctx => {
                             const value = ctx.dataset.data[ctx.dataIndex].y;
                             if (value >= 0 && value <= 40) {
-                              return 'rgb(162, 255, 0)';
+                              return '#eefa05';
                             } else if (value >= 41 && value <= 70) {
-                              return 'rgb(82, 245, 0)';
+                                return '#2afa05';
                             } else if (value >= 71 && value <= 90) {
-                              return 'rgb(255, 0, 195)';
+                                return '#fc0303';
                             } else {
-                              return 'rgb(255, 0, 5)';
+                                return '#0452ce';
                             }
                           },
                         },
