@@ -75,6 +75,9 @@ const BpmRecords = ({ showTable, setShowTable }) => {
         paddingRight: '20px'
       },
     },
+    muiPaginationProps: {
+      rowsPerPageOptions: [5, 10],
+    },
   });
 
   // Function to hide the table
