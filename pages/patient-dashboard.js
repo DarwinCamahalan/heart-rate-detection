@@ -188,7 +188,7 @@ const PatientDashboard = () => {
                     data={{
                       datasets: [
                         {
-                          label: 'BPM Data',
+                          label: 'Daily BPM Data',
                           data: Object.entries(bpmData[selectedDate]).map(([time, { bpmValue }]) => ({
                             x: moment(time, 'HH:mm:ss').toDate(),
                             y: bpmValue || 0,

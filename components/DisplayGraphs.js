@@ -192,10 +192,9 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
     
 
     const renderMonthlyGraph = () => {
-        // Logic to calculate monthly average BPM
-        const monthlyData = calculateMonthlyData(selectedDate);
-
-        if (monthlyData) {
+        const monthlyData = calculateMonthlyData();
+    
+        if (monthlyData.length > 0) {
             return (
                 <Scatter
                     style={{ padding: '10px 20px' }}
@@ -203,12 +202,16 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                         datasets: [
                             {
                                 label: 'Monthly Average BPM Data',
-                                data: monthlyData.map(({ date, avgBpm }) => ({
-                                    x: moment(date, 'MM/DD/YYYY').toDate(),
+                                data: monthlyData.map(({ month, avgBpm }) => ({
+                                    x: moment(month, 'MM/YYYY').toDate(),
                                     y: avgBpm,
+                                    color: avgBpm <= 40 ? 'rgb(162, 255, 0)' :
+                                           avgBpm <= 70 ? 'rgb(82, 245, 0)' :
+                                           avgBpm <= 90 ? 'rgb(255, 0, 195)' :
+                                                        'rgb(255, 0, 5)'
                                 })),
                                 pointRadius: 6,
-                                pointBackgroundColor: 'rgb(255, 0, 0)',
+                                pointBackgroundColor: ctx => ctx.dataset.data.map(point => point.color)
                             },
                         ],
                     }}
@@ -217,11 +220,11 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                             x: {
                                 type: 'time',
                                 time: {
-                                    unit: 'day',
+                                    unit: 'month',
                                 },
                                 title: {
                                     display: true,
-                                    text: 'Date',
+                                    text: 'Month',
                                 },
                             },
                             y: {
@@ -238,6 +241,7 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
             return <p className={styles.noData}>No available data for this month.</p>;
         }
     };
+    
 
     const calculateWeeklyData = (selectedDate) => {
         const startOfWeek = moment(selectedDate, 'MM/DD/YYYY').startOf('week');
@@ -259,23 +263,33 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
     };
     
 
-    const calculateMonthlyData = (selectedDate) => {
-        const startOfMonth = moment(selectedDate, 'MM/DD/YYYY').startOf('month').format('MM/DD/YYYY');
-        const endOfMonth = moment(selectedDate, 'MM/DD/YYYY').endOf('month').format('MM/DD/YYYY');
-        const monthlyData = [];
-
-        for (let date = startOfMonth; moment(date, 'MM/DD/YYYY').isSameOrBefore(endOfMonth); date = moment(date, 'MM/DD/YYYY').add(1, 'days').format('MM/DD/YYYY')) {
-            const dailyData = bpmData[date];
-            if (dailyData) {
-                const entries = Object.values(dailyData);
-                const totalBpm = entries.reduce((acc, entry) => acc + entry.bpmValue, 0);
-                const avgBpm = totalBpm / entries.length;
-                monthlyData.push({ date, avgBpm });
+    const calculateMonthlyData = () => {
+        const monthlyData = {};
+    
+        // Group BPM values by month
+        Object.keys(bpmData).forEach(date => {
+            const month = moment(date, 'MM/DD/YYYY').format('MM/YYYY');
+            const bpmValues = Object.values(bpmData[date]);
+            const totalBpm = bpmValues.reduce((acc, { bpmValue }) => acc + bpmValue, 0);
+            const avgBpm = totalBpm / bpmValues.length;
+    
+            if (!monthlyData[month]) {
+                monthlyData[month] = { totalBpm: 0, count: 0 };
             }
-        }
-
-        return monthlyData;
+    
+            monthlyData[month].totalBpm += avgBpm;
+            monthlyData[month].count += 1;
+        });
+    
+        // Calculate monthly averages
+        const monthlyAverages = Object.keys(monthlyData).map(month => ({
+            month,
+            avgBpm: monthlyData[month].totalBpm / monthlyData[month].count
+        }));
+    
+        return monthlyAverages;
     };
+    
 
     return (
         <>
