@@ -92,7 +92,7 @@
             justify-content: center;
             align-items: center;
             padding: 1em 2em 1em 1em;
-            transition: 200ms;
+            transition: 250ms;
             p{
                 font-size: 2.7em;
                 font-weight: bolder;
@@ -100,10 +100,11 @@
             }
             
             h5{
-                font-size: 11em;
+                font-size: 9em;
                 font-weight: bolder;
                 color: rgb(0, 177, 0);
-                font-family: monospace;
+                font-family: cursive;
+                margin-bottom: 0.2em;
             }
 
             button{
