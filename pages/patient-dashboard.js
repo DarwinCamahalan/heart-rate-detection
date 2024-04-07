@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { db } from '../firebaseConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc, setDoc } from 'firebase/firestore';
 import { Chart, LinearScale, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
 Chart.register(LinearScale, PointElement, Tooltip, Legend, TimeScale);
 import { Scatter } from 'react-chartjs-2';
@@ -27,9 +27,29 @@ const PatientDashboard = () => {
   const userEmail = Cookies.get('userEmail');
   const cardTitle = ['X-Ray Camera', 'Tumor Detection', 'Cancer Detection'];
 
+  const sendAverageBpmToFirestore = useCallback(async (date, averageBpm) => {
+    try {
+      const patientCollectionRef = collection(db, 'patients');
+      const q = query(patientCollectionRef, where('email', '==', userEmail));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const patientDoc = querySnapshot.docs[0];
+        const patientId = patientDoc.id;
+        const patientRef = doc(db, 'patients', patientId);
+        const patientData = (await getDoc(patientRef)).data();
+        await setDoc(patientRef, { ...patientData, bpmAverages: { ...patientData.bpmAverages, [date]: averageBpm } }, { merge: true });
+        console.log(`Average BPM for ${date} successfully added to Firestore.`);
+      } else {
+        console.log('No patient data found for this email.');
+      }
+    } catch (error) {
+      console.error('Error adding average BPM to Firestore:', error);
+    }
+  }, [userEmail]);
+
   useEffect(() => {
     const fetchPatientData = async () => {
-
       try {
         const patientCollectionRef = collection(db, 'patients');
         const q = query(patientCollectionRef, where('email', '==', userEmail));
@@ -43,7 +63,6 @@ const PatientDashboard = () => {
           const dates = Object.keys(data.bpm || {}).filter(date =>
             Object.keys(data.bpm[date]).length > 0
           );
-
           setAvailableDates(dates);
 
           if (dates.length > 0) {
@@ -58,19 +77,16 @@ const PatientDashboard = () => {
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
-      
     };
   
     if (userEmail) {
       fetchPatientData();
-
     } else {
       console.log('No patient email found in cookies.');
     }
   }, [userEmail]);
 
   useEffect(() => {
-    
     if (selectedDate && bpmData[selectedDate]) {
       const latestEntry = Object.entries(bpmData[selectedDate])
         .sort(([timeA], [timeB]) => moment(timeB, 'HH:mm:ss').diff(moment(timeA, 'HH:mm:ss')))
@@ -79,12 +95,10 @@ const PatientDashboard = () => {
       if (latestEntry) {
         setUserBpm(latestEntry[1].bpmValue);
         setUserBpmTime(moment(latestEntry[0], 'HH:mm:ss').format('h:mm A'));
-
       } else {
         setUserBpm(null);
         setUserBpmTime('');
       }
-
     } else {
       setUserBpm(null);
       setUserBpmTime('');
@@ -93,16 +107,17 @@ const PatientDashboard = () => {
   
   useEffect(() => {
     if (selectedDate && bpmData[selectedDate]) {
-      const entries = Object.values(bpmData[selectedDate]);
-      const totalBpm = entries.reduce((acc, entry) => acc + entry.bpmValue, 0);
-      const avgBpm = totalBpm / entries.length;
-      setAverageBpm(avgBpm.toFixed(1));
-
+        const entries = Object.values(bpmData[selectedDate]);
+        const totalBpm = entries.reduce((acc, entry) => acc + entry.bpmValue, 0);
+        const avgBpm = totalBpm / entries.length;
+        const roundedAvgBpm = parseFloat(avgBpm.toFixed(1)); // Convert to number with one decimal place
+        setAverageBpm(roundedAvgBpm);
+        sendAverageBpmToFirestore(selectedDate, roundedAvgBpm); // Pass the roundedAvgBpm to the function
     } else {
-      setAverageBpm(null);
+        setAverageBpm(null);
     }
-    
-  }, [selectedDate, bpmData]);
+}, [selectedDate, bpmData, sendAverageBpmToFirestore]);
+
 
   const handleDateChange = event => {
     setSelectedDate(event.target.value);
@@ -110,9 +125,9 @@ const PatientDashboard = () => {
 
   return (
     <motion.div
-    initial={{ opacity: 0}}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 1 }}>
+      initial={{ opacity: 0}}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}>
 
       <Head>
         <title>Patient Dashboard</title>

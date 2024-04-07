@@ -93,7 +93,7 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                 data={{
                     datasets: [
                         {
-                            label: 'BPM Data',
+                            label: 'Daily BPM Data',
                             data: Object.entries(bpmData[selectedDate]).map(([time, { bpmValue }]) => ({
                                 x: moment(time, 'HH:mm:ss').toDate(),
                                 y: bpmValue || 0,
@@ -141,7 +141,7 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
     const renderWeeklyGraph = () => {
         // Logic to calculate weekly average BPM
         const weeklyData = calculateWeeklyData(selectedDate);
-
+    
         if (weeklyData) {
             return (
                 <Scatter
@@ -149,13 +149,17 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                     data={{
                         datasets: [
                             {
-                                label: 'Weekly BPM Data',
+                                label: 'Weekly Average BPM Data',
                                 data: weeklyData.map(({ date, avgBpm }) => ({
                                     x: moment(date, 'MM/DD/YYYY').toDate(),
                                     y: avgBpm,
+                                    color: avgBpm <= 40 ? 'rgb(162, 255, 0)' :
+                                           avgBpm <= 70 ? 'rgb(82, 245, 0)' :
+                                           avgBpm <= 90 ? 'rgb(255, 0, 195)' :
+                                                          'rgb(255, 0, 5)'
                                 })),
                                 pointRadius: 6,
-                                pointBackgroundColor: 'rgb(0, 0, 255)',
+                                pointBackgroundColor: ctx => ctx.dataset.data.map(point => point.color)
                             },
                         ],
                     }}
@@ -185,6 +189,7 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
             return <p className={styles.noData}>No available data for this week.</p>;
         }
     };
+    
 
     const renderMonthlyGraph = () => {
         // Logic to calculate monthly average BPM
@@ -197,7 +202,7 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                     data={{
                         datasets: [
                             {
-                                label: 'Monthly BPM Data',
+                                label: 'Monthly Average BPM Data',
                                 data: monthlyData.map(({ date, avgBpm }) => ({
                                     x: moment(date, 'MM/DD/YYYY').toDate(),
                                     y: avgBpm,
@@ -235,22 +240,24 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
     };
 
     const calculateWeeklyData = (selectedDate) => {
-        const startOfWeek = moment(selectedDate, 'MM/DD/YYYY').startOf('week').format('MM/DD/YYYY');
-        const endOfWeek = moment(selectedDate, 'MM/DD/YYYY').endOf('week').format('MM/DD/YYYY');
+        const startOfWeek = moment(selectedDate, 'MM/DD/YYYY').startOf('week');
+        const endOfWeek = moment(selectedDate, 'MM/DD/YYYY').endOf('week');
         const weeklyData = [];
-
-        for (let date = startOfWeek; moment(date, 'MM/DD/YYYY').isSameOrBefore(endOfWeek); date = moment(date, 'MM/DD/YYYY').add(1, 'days').format('MM/DD/YYYY')) {
-            const dailyData = bpmData[date];
+    
+        for (let date = moment(startOfWeek); date.isSameOrBefore(endOfWeek); date.add(1, 'days')) {
+            const formattedDate = date.format('M/D/YYYY');
+            const dailyData = bpmData[formattedDate];
             if (dailyData) {
                 const entries = Object.values(dailyData);
                 const totalBpm = entries.reduce((acc, entry) => acc + entry.bpmValue, 0);
                 const avgBpm = totalBpm / entries.length;
-                weeklyData.push({ date, avgBpm });
+                weeklyData.push({ date: formattedDate, avgBpm });
             }
         }
-
+    
         return weeklyData;
     };
+    
 
     const calculateMonthlyData = (selectedDate) => {
         const startOfMonth = moment(selectedDate, 'MM/DD/YYYY').startOf('month').format('MM/DD/YYYY');
@@ -285,9 +292,9 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                             transition={{ duration: 0.5 }}>
 
                             <div className={styles.tabs}>
-                                <span onClick={() => handleTimeRangeChange('daily')}>Daily</span>
-                                <span onClick={() => handleTimeRangeChange('weekly')}>Weekly</span>
-                                <span onClick={() => handleTimeRangeChange('monthly')}>Monthly</span>
+                                <span onClick={() => handleTimeRangeChange('daily')} style={{backgroundColor: timeRange === 'daily' ? 'rgb(244, 244, 244)' : '', borderBottom: timeRange === 'daily' ? '0.2em solid #0452ce' : ''}}>Daily</span>
+                                <span onClick={() => handleTimeRangeChange('weekly')} style={{backgroundColor: timeRange === 'weekly' ? 'rgb(244, 244, 244)' : '', borderBottom: timeRange === 'weekly' ? '0.2em solid #0452ce' : ''}}>Weekly</span>
+                                <span onClick={() => handleTimeRangeChange('monthly')} style={{backgroundColor: timeRange === 'monthly' ? 'rgb(244, 244, 244)' : '', borderBottom: timeRange === 'monthly' ? '0.2em solid #0452ce' : ''}}>Monthly</span>
                             </div>
 
                             <select onChange={handleDateChange} className={styles.selectDate}>
