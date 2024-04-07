@@ -39,8 +39,6 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                         const sortedDates = dates.sort((a, b) => moment(b, 'MM/DD/YYYY').diff(moment(a, 'MM/DD/YYYY')));
                         setSelectedDate(sortedDates[0]);
                     }
-                } else {
-                    console.log('No patient data found for this email.');
                 }
 
             } catch (error) {
@@ -50,9 +48,8 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
 
         if (userEmail) {
             fetchPatientData();
-        } else {
-            console.log('No patient email found in cookies.');
         }
+        
     }, [userEmail]);
 
     const handleDateChange = event => {

@@ -26,12 +26,10 @@ const BpmRecords = ({ showTable, setShowTable }) => {
 
     if (userEmail) {
       fetchBpmData();
-    } else {
-      console.log('No user email found in cookies.');
     }
+    
   }, [userEmail]);
 
-  // Define columns for the table
   const columns = useMemo(() => [
     {
       accessorKey: 'date',

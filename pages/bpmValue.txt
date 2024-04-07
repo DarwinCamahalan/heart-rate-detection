@@ -49,8 +49,7 @@ bpm: {
         }
     },
 
-}
-
+},
 bpmAverages: {
     4/5/2024: 73.3,
     4/6/2024: 75.4,
@@ -58,4 +57,12 @@ bpmAverages: {
     5/17/2024 :87,
     5/6/2024: 87.3,
     6/8/2024: 87
+},
+schedules: {
+    time: "15:38",
+    date: 4/7/2024  ,
+    message: "I want to check my BPM",
+    scheduleApproved: false,
+    notify: false
 }
+

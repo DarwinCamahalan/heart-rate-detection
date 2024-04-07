@@ -39,10 +39,8 @@ const PatientDashboard = () => {
         const patientRef = doc(db, 'patients', patientId);
         const patientData = (await getDoc(patientRef)).data();
         await setDoc(patientRef, { ...patientData, bpmAverages: { ...patientData.bpmAverages, [date]: averageBpm } }, { merge: true });
-        console.log(`Average BPM for ${date} successfully added to Firestore.`);
-      } else {
-        console.log('No patient data found for this email.');
       }
+
     } catch (error) {
       console.error('Error adding average BPM to Firestore:', error);
     }
@@ -70,8 +68,6 @@ const PatientDashboard = () => {
             setSelectedDate(sortedDates[0]);
           }
 
-        } else {
-          console.log('No patient data found for this email.');
         }
 
       } catch (error) {
@@ -81,8 +77,6 @@ const PatientDashboard = () => {
   
     if (userEmail) {
       fetchPatientData();
-    } else {
-      console.log('No patient email found in cookies.');
     }
   }, [userEmail]);
 

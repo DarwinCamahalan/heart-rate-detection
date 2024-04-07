@@ -9,6 +9,7 @@ import logo from '../public/logo.png';
 import Cookies from 'js-cookie';
 import BpmRecords from './BpmRecords';
 import DisplayGraphs from './DisplayGraphs';
+import ScheduleCheckup from './ScheduleCheckup';
 
 const Navbar = () => {
   const userEmail = Cookies.get('userEmail');
@@ -22,6 +23,7 @@ const Navbar = () => {
   const [uid, setUid] = useState('');
   const [showTable, setShowTable] = useState(false);
   const [showGraphs, setShowGraphs] = useState(false);
+  const [showCheckup, setShowCheckup] = useState(false);
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -37,8 +39,6 @@ const Navbar = () => {
           setShowAccountName(data.login);
           setUid(patientDoc.id);
 
-        } else {
-          console.log('No account data found for this email.');
         }
 
       } catch (error) {
@@ -49,9 +49,6 @@ const Navbar = () => {
 
     if (userEmail) {
       fetchAccountData();
-
-    } else {
-      console.log('No account email found in cookies.');
     }
 
   }, [userEmail, collectionName]);
@@ -82,12 +79,16 @@ const Navbar = () => {
     setShowGraphs(prevState => !prevState);
   };
 
+  const toggleCheckupsVisibility = () => {
+    setShowCheckup(prevState => !prevState);
+  };
+
   return (
     <>
       <nav className={styles.navMainContainer}>
         <ul>
           <li>
-            <Link className={styles.homepageLink} href={userEmail != undefined ? dashboard : "/"}>
+            <Link className={styles.homepageLink} href={userEmail ? `/${dashboard}` : "/"}>
               <Image className={styles.logoImage} src={logo} alt='Medical Consultation Logo'/>
               Medical Consultation
             </Link>
@@ -102,7 +103,7 @@ const Navbar = () => {
                   <div className={styles.navigation}>
                       <span onClick={toggleTableVisibility}>BPM Records</span>
                       <span onClick={toggleGraphsVisibility}>Graphs</span>
-                      <span>Schedule Checkup</span>
+                      <span onClick={toggleCheckupsVisibility}>Schedule Checkup</span>
                   </div>
   
                   <div className={styles.bell}>
@@ -161,8 +162,8 @@ const Navbar = () => {
       : null}
 
       <BpmRecords showTable={showTable} setShowTable={setShowTable} />
-
       <DisplayGraphs showGraphs ={showGraphs} setShowGraphs={setShowGraphs}/>
+      <ScheduleCheckup showCheckup ={showCheckup} setShowCheckup={setShowCheckup}/>
     </>
   );
 };

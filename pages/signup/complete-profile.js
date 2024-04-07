@@ -37,8 +37,6 @@ const CompleteProfile = () => {
             setRole(data.role);
             setAccountCreationInfo(data.createdOn);
 
-          } else {
-            console.log('No patient data found for this email.');
           }
 
         } catch (error) {
@@ -49,9 +47,6 @@ const CompleteProfile = () => {
     
       if (userEmail) {
         fetchPatientData();
-
-      } else {
-        console.log('No patient email found in cookies.');
       }
     
       const showModalCookie = Cookies.get('showModal');

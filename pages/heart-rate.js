@@ -44,12 +44,9 @@ export default function HeartRate() {
             const patientDoc = querySnapshot.docs[0];
             const data = patientDoc.data();
             setPatientData({ ...data, id: patientDoc.id });
-          } else {
-            console.log('No patient data found for this email.');
           }
-        } else {
-          console.log('No patient email found in cookies.');
         }
+        
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
@@ -114,7 +111,7 @@ export default function HeartRate() {
               <h5>{finalBpm}</h5>
               <div className={styles.buttons}>
                 <button onClick={handleSubmit}><span>&#128505;</span> Submit</button>
-                <button onClick={() => { window.location.href = '/heart-rate'; }}> <span>&#128505;</span> Retry</button>
+                <button onClick={() => { window.location.href = '/heart-rate'; }}> <span>&#120;</span> Retry</button>
               </div>
             </div>
           </div>
