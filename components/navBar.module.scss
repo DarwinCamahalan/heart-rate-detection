@@ -67,6 +67,14 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                position: relative;
+
+                .notificationDot{
+                    top: 5%;
+                    left: 5%;
+                    position: absolute;
+                    color: red;
+                }
 
                 .bellIcon{  
                     font-weight: bolder;
@@ -203,6 +211,73 @@
                     }
                 }
             }
+        }
+    }
+}
+
+.notificationContainer{
+    border: 1px solid rgb(203, 203, 203);
+    border-radius: 0.5em;
+    position: absolute;
+    width: 12em;
+    height: auto;
+    top: 3em;
+    right: 14.5%;
+    background-color: white;
+    box-shadow: 0px 2px 12px -5px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    padding: 0.8em 1em;
+    padding-bottom: 1em;
+
+    .content{
+
+        h5{
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 1em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid rgb(230, 230, 230);
+        }
+
+        span{
+            background-color: #0451ce14;
+            padding: 0.5em;
+            border-radius: 0.3em;
+            letter-spacing: 1px;
+            font-size: 0.93em;
+        }
+
+        p{
+            font-size: 0.8em;
+            margin-top: 1.8em;
+            margin-bottom: 0.6em;
+            padding-left: 0.5em;
+            font-weight: bold;
+        }
+    
+        .alert{
+            font-size: 0.8em;
+            padding: 0.5em 0.3em;
+            padding-left: 0.6em;
+            margin-top: 1em;
+            -webkit-box-orient: vertical;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            background-color: rgba(0, 128, 0, 0.051);
+            border-left: 0.25em solid green;
+        }
+
+        .noNotification{
+            padding-left: 0.5em;
+            color: rgb(151, 150, 150);
+            font-size: 0.9em;
+            width: 100%;
+            text-align: center;
+            margin-top: 1em !important;
         }
     }
 }

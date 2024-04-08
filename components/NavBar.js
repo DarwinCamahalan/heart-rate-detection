@@ -18,12 +18,14 @@ const Navbar = () => {
 
   const [fullName, setFullName] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
   const [showAccountName, setShowAccountName] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [uid, setUid] = useState('');
   const [showTable, setShowTable] = useState(false);
   const [showGraphs, setShowGraphs] = useState(false);
   const [showCheckup, setShowCheckup] = useState(false);
+  const [notify, setNotify] = useState(false);
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -35,6 +37,18 @@ const Navbar = () => {
         if (!querySnapshot.empty) {
           const patientDoc = querySnapshot.docs[0];
           const data = patientDoc.data();
+
+          if (data.schedules && data.schedules.notify !== undefined) {
+            
+            if(data.schedules.notify == true){
+              setNotify(true);
+
+            }else if(data.schedules.notify == false){
+              setNotify(false);
+            }
+
+          }
+
           setFullName(`${data.firstName} ${data.lastName}`);
           setShowAccountName(data.login);
           setUid(patientDoc.id);
@@ -107,7 +121,8 @@ const Navbar = () => {
                   </div>
   
                   <div className={styles.bell}>
-                    <span className={styles.bellIcon}>&#128365;</span>
+                    {notify ? <span className={styles.notificationDot}>●</span> : null}
+                    <span className={styles.bellIcon} onMouseOver={(()=>{setShowNotification(true)})}>&#128365;</span>
                   </div>
                 </>
               : null}
@@ -159,6 +174,30 @@ const Navbar = () => {
           </div>
         </motion.div>
 
+      : null}
+
+      {showNotification ? 
+      <div className={styles.notificationContainer} onMouseLeave={(()=>{setShowNotification(false)})}>
+        <div className={styles.content}>
+          <h5>Notifications</h5>
+          <span>All</span>
+
+          <p>Recent</p>
+          {notify ? 
+      
+            <motion.div className={styles.alert}
+              initial={{ opacity: 0}}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}>
+                Scheduled Checkup has been approved by the Doctor
+            </motion.div>
+
+            : 
+
+            <div className={styles.noNotification}>No Notification</div>}
+
+        </div>
+      </div>
       : null}
 
       <BpmRecords showTable={showTable} setShowTable={setShowTable} />
