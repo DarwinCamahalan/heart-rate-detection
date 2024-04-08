@@ -132,7 +132,10 @@ const Navbar = () => {
                 {fullName} <span>▼</span>
       
                 {showDropdown && 
-                  <div className={styles.accountDropdown} onMouseLeave={() => setShowDropdown(false)}>
+                  <motion.div className={styles.accountDropdown} onMouseLeave={() => setShowDropdown(false)}
+                  initial={{ opacity: 0}}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}>
 
                     <span><Link href="#">My Account</Link></span>
 
@@ -142,7 +145,7 @@ const Navbar = () => {
                       Logout
                     </span>
 
-                  </div>
+                  </motion.div>
                 }
               </div>
             </li>
@@ -177,7 +180,10 @@ const Navbar = () => {
       : null}
 
       {showNotification ? 
-      <div className={styles.notificationContainer} onMouseLeave={(()=>{setShowNotification(false)})}>
+      <motion.div className={styles.notificationContainer} onMouseLeave={(()=>{setShowNotification(false)})}
+      initial={{ opacity: 0}}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}>
         <div className={styles.content}>
           <h5>Notifications</h5>
           <span>All</span>
@@ -197,7 +203,7 @@ const Navbar = () => {
             <div className={styles.noNotification}>No Notification</div>}
 
         </div>
-      </div>
+      </motion.div>
       : null}
 
       <BpmRecords showTable={showTable} setShowTable={setShowTable} />

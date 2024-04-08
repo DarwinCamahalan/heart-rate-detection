@@ -2,7 +2,7 @@ lastName: "lastname",
 firstNae: "firstname",
 age: 21,
 login: false,
-birthday: "2024-05-01",
+birthday: April 17, 2024 at 12:00:00 AM UTC+8,
 createdOn: "4/4/2024",
 email: "patient@account.com",
 gender: "male",
@@ -48,7 +48,6 @@ bpm: {
             bpmValue: 70
         }
     },
-
 },
 bpmAverages: {
     4/5/2024: 73.3,

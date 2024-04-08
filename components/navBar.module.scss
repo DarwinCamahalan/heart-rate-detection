@@ -89,13 +89,13 @@
                 position: relative; 
                 width: 40%;
                 font-size: 0.95em;
-
+                z-index: 3;
                 &:hover{
                     cursor: pointer;
                 }
                    .accountDropdown{
                     width: 8em;
-                    border: 1px solid rgb(235, 234, 234);
+                    border: 1px solid rgb(203, 203, 203);
                     border-radius: 0.5em;
                     position: absolute;
                     top: 2em;
@@ -144,7 +144,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2;
+    z-index: 3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -219,16 +219,16 @@
     border: 1px solid rgb(203, 203, 203);
     border-radius: 0.5em;
     position: absolute;
-    width: 12em;
+    width: 13em;
     height: auto;
-    top: 3em;
-    right: 14.5%;
+    top: 3.2em;
+    right: 15%;
     background-color: white;
     box-shadow: 0px 2px 12px -5px rgba(0,0,0,0.25);
     display: flex;
     flex-direction: column;
     padding: 0.8em 1em;
-    padding-bottom: 1em;
+    padding-bottom: 1.2em;
 
     .content{
 
@@ -245,7 +245,11 @@
             padding: 0.5em;
             border-radius: 0.3em;
             letter-spacing: 1px;
-            font-size: 0.93em;
+            font-size: 0.9em;
+
+            &:hover{
+                cursor: pointer;
+            }
         }
 
         p{
@@ -258,9 +262,9 @@
     
         .alert{
             font-size: 0.8em;
-            padding: 0.5em 0.3em;
+            padding: 1em 0.3em;
             padding-left: 0.6em;
-            margin-top: 1em;
+            margin-top: 1.1em;
             -webkit-box-orient: vertical;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -273,11 +277,12 @@
 
         .noNotification{
             padding-left: 0.5em;
+            margin-top: 1.7em;
+            margin-bottom: 1em;
             color: rgb(151, 150, 150);
             font-size: 0.9em;
             width: 100%;
             text-align: center;
-            margin-top: 1em !important;
-        }
+                    }
     }
 }
