@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import styles from '../styles/doctorDashboard.module.scss';
-import {motion} from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/router';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { db } from '../firebaseConfig';
@@ -50,11 +50,8 @@ const DoctorDashboard = () => {
     let latestDate;
     let latestTime;
   
-    // Loop through dates
     for (const dateKey in bpm) {
-      // Loop through times within each date
       for (const timeKey in bpm[dateKey]) {
-        // Update latestDate and latestTime if it's the latest
         if (!latestDate || new Date(dateKey + ' ' + timeKey) > new Date(latestDate + ' ' + latestTime)) {
           latestDate = dateKey;
           latestTime = timeKey;
@@ -62,15 +59,12 @@ const DoctorDashboard = () => {
       }
     }
   
-    // Check if latestDate and latestTime are defined
     if (latestDate !== undefined && latestTime !== undefined) {
-      // Check if bpm[latestDate] and bpm[latestDate][latestTime] are defined
       if (bpm[latestDate] && bpm[latestDate][latestTime]) {
         return bpm[latestDate][latestTime].bpmValue;
       }
     }
-  
-    // Return a default value or handle the error as per your application's requirements
+
     return 'N/A';
   };
   
@@ -119,6 +113,15 @@ const DoctorDashboard = () => {
       },
     },
   });
+
+  let latestDate = null;
+  let latestBpmAverage = 'N/A';
+
+  if (selectedPatient && selectedPatient.original.bpmAverages) {
+    const dates = Object.keys(selectedPatient.original.bpmAverages).sort((a, b) => new Date(b) - new Date(a));
+    latestDate = dates[0];
+    latestBpmAverage = selectedPatient.original.bpmAverages[latestDate];
+  }
 
   return (
     <>
@@ -194,10 +197,10 @@ const DoctorDashboard = () => {
                       {selectedPatient.original.bpmAverages !== undefined ? 
                         <div>
                           <p style={{color : '#0452ce'}}>
-                            {Object.values(selectedPatient.original.bpmAverages).sort((a, b) => new Date(b) - new Date(a))[0]}
+                            {latestBpmAverage}
                           </p>
                           <p>
-                            {Object.keys(selectedPatient.original.bpmAverages).sort((a, b) => new Date(b) - new Date(a))[0]}
+                            {latestDate}
                           </p>
                         </div>
                       : <p className={styles.noDataBpm}>N/A</p>}
