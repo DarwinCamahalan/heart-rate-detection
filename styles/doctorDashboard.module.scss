@@ -1,28 +1,272 @@
-.mainContainer {
+.dashboardLayout{
+  width: 100%;
+  display: flex;
+
+
+  .sideBar{
+    width: 20em;
+    height: 90.7vh;
+    background-color: rgba(0, 0, 0, 0.879);
+  }
+
+  .tableContainer{
     width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
     padding: 1em;
+
+    h2{
+      margin-bottom: 1em;
+    }
   }
+
+}
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
   
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
-  }
-  
-  .modalContent {
+  .modalBackground{
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.688);
+      width: 100%;
+      height: 100%;
+      
+  } 
+
+  .modalContent{
+    z-index: 4;
     background-color: white;
-    padding: 2em;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+    box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
+    border-radius: 1em;
+    border: 1px solid rgb(219, 219, 219);
+    padding: 1.8em 1.5em;
+    display: flex;
+    width: 35em;
+    position: relative;
+
+    .warningContainer{
+      position: absolute;
+      top: -11%;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .warning{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(255, 240, 240);
+        border-left: 0.2em solid red;
+        padding: 0.3em 0.7em;
+
+
+        span{
+          font-size: 1.5em !important;
+          color: red;
+          margin-right: 0.3em;
+        }
+
+        p{
+          color: red;
+          padding-top: 0.15em;
+        }
+
+      }
+
+    }
+
+    .patientInfo{
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+
+      h5{
+        font-size: 1.4em;
+      }
+
+      p{
+        margin: 0.3em 0;
+        margin-top: 0.9em;
+        font-weight: bold;
+
+        &:first-child{
+          margin-top: 0;
+        }
+      }
+
+      span{
+        background-color: rgb(243, 243, 243);
+        padding: 0.5em 0.3em;
+        padding-left: 0.8em;
+        text-transform: capitalize;
+        margin-right: 1em;
+        font-size: 0.9em;
+
+        &:nth-child(5){
+          text-transform: lowercase !important;
+        }
+
+      }
+    }
+
+    .column2{
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      margin-left: 1em;
+
+      .bpm{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        .currentBpmCard{
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: white;
+          box-shadow: 2px 0px 6px -2px rgba(0,0,0,0.55);
+          border-radius: 1em;
+          border: 1px solid rgb(219, 219, 219);
+          text-align: center;
+          padding: 0.7em 0;
+          margin: 0 0 0.5em 0.5em;
+
+          h1{
+              margin: 0;
+              font-size: 1em;
+          }
+
+          p{
+              &:first-child{
+                  font-size: 3em !important;
+                  font-weight: bolder;
+                  color: rgb(3, 189, 0);
+              }
+
+              &:last-child{
+                  font-size: 0.85em;
+                  color: rgb(108, 108, 108);
+              }
+          }
+
+          .noDataBpm{
+              font-size: 1.3em !important;
+              margin-top: 0.7em;
+              color: rgb(189, 189, 189) !important;
+          }
+        }
+      }
+
+      .schedule{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+
+        .schedDateTime{
+          display: flex;
+          flex-direction: row;
+          margin-top: 1em;
+          width: 100%;
+
+          .time{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-right: 1em;
+          }
+
+          .date{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+          }
+
+        }
+
+        h5{
+          font-size: 1.1em;
+          margin-top: 0.4em;
+        }
   
+        p{
+          margin: 0.3em 0;
+          margin-top: 0.9em;
+          font-weight: bold;
+  
+          &:first-child{
+            margin-top: 0;
+          }
+        }
+  
+        span{
+          background-color: rgb(243, 243, 243);
+          padding: 0.5em 0.3em;
+          padding-left: 0.8em;
+          font-size: 0.9em;
+        }
+
+        .message{
+          padding-top: 1em !important;
+          padding-bottom: 1em !important;
+          font-size: 0.85em;
+        }
+
+        button{
+         width: 100%;
+         background-color: #0452ce;
+         color: white;
+         border: 0;
+         border-radius: 0.3em;
+         padding: 0.5em 0;
+         font-size: 1em;
+         margin-top: 1em;
+
+         &:hover{
+          cursor: pointer;
+         }
+        }
+
+        .incomplete{
+          background-color: rgb(255, 211, 211);
+          padding: 0.5em 0.8em;
+          font-size: 0.9em;
+          color: red;
+          margin-top: 1em;
+        }
+
+      }
+
+      .noCheckup{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        color: rgb(174, 174, 174);
+        border: 1px solid rgb(237, 237, 237);
+        border-radius: 0.5em;
+        margin-top: 1em;
+      }
+
+    }
+
+  }
+}
+
+
+

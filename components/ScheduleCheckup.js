@@ -78,43 +78,49 @@ const ScheduleCheckup = ({ showCheckup, setShowCheckup }) => {
         setError('User email not found in cookies.');
         return;
       }
-
+  
       if (!selectedDate || !selectedTime || !message) {
         setError('Please fill out all fields.');
         return;
       }
-
+  
       if (moment(selectedDate).isBefore(moment(), 'day')) {
         setError('Please select a date in the future.');
         return;
       }
-
+  
       const selectedHour = parseInt(selectedTime.split(':')[0], 10);
       if (selectedHour < 9 || selectedHour >= 17) {
         setError('Please select a time between 9:00 AM and 5:00 PM.');
         return;
       }
-
+  
+      // Add AM or PM to the selectedTime
+      const hour = parseInt(selectedTime.split(':')[0], 10);
+      const minute = selectedTime.split(':')[1];
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const formattedTime = `${hour % 12 || 12}:${minute} ${ampm}`;
+  
       const patientCollectionRef = collection(db, 'patients');
       const q = query(patientCollectionRef, where('email', '==', userEmail));
       const querySnapshot = await getDocs(q);
-
+  
       if (!querySnapshot.empty) {
         const patientDoc = querySnapshot.docs[0];
         const patientDocRef = doc(db, 'patients', patientDoc.id);
-
+  
         const scheduleData = {
-          time: selectedTime,
+          time: formattedTime, // Use the formattedTime here
           date: selectedDate,
           message: message,
           scheduleApproved: false,
           notify: false,
         };
-
+  
         await updateDoc(patientDocRef, {
           schedules: scheduleData,
         });
-
+  
         setSuccess(true);
       }
       
@@ -122,11 +128,11 @@ const ScheduleCheckup = ({ showCheckup, setShowCheckup }) => {
       console.error('Error adding schedule document: ', error);
       setError('Error submitting checkup request.');
     }
-
+  
     setShowCheckup(false);
     router.reload()
   };
-
+  
   return (
     <>
       {showCheckup ? (
