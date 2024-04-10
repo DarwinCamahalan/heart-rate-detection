@@ -74,6 +74,10 @@
                     left: 5%;
                     position: absolute;
                     color: red;
+
+                    &:hover{
+                        cursor: pointer;
+                    }
                 }
 
                 .bellIcon{  

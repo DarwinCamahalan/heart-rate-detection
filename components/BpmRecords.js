@@ -48,7 +48,6 @@ const BpmRecords = ({ showTable, setShowTable }) => {
     },
   ], []);
 
-  // Map and format data to match the structure expected by Material React Table
   const formattedData = useMemo(() => {
     return bpmData.flatMap(dateData =>
       dateData ? Object.entries(dateData).flatMap(([date, timeData]) =>
@@ -61,8 +60,6 @@ const BpmRecords = ({ showTable, setShowTable }) => {
     );
   }, [bpmData]);
   
-
-  // Create the table instance
   const table = useMaterialReactTable({
     columns,
     data: formattedData,
@@ -80,7 +77,6 @@ const BpmRecords = ({ showTable, setShowTable }) => {
     },
   });
 
-  // Function to hide the table
   const hideTable = () => {
     setShowTable(false);
   };

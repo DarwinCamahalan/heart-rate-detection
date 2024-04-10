@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { motion } from "framer-motion"
+import Image from 'next/image';
 import Link from 'next/link';
 import Head from 'next/head';
 import Cookies from 'js-cookie';
 import styles from './login.module.scss'
+import patientImageBG from '../../public/patient-BG.png'
 
 const PatientLogin = () => {
   const [email, setEmail] = useState('');
@@ -74,6 +76,7 @@ const PatientLogin = () => {
       </Head>
       
       <div className={styles.mainContainer}>
+        <Image className={styles.patientBG} src={patientImageBG} alt='image background'/>
           <div className={styles.loginForm}>
             <h2>Patient Login</h2>
             <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown}/>

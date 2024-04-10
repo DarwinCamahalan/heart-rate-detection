@@ -2,8 +2,6 @@ import { motion } from "framer-motion"
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/homePage.module.scss'
-import Image from 'next/image';
-import doctor from '../public/doctor.png'
 
 export default function Home() {
 
@@ -16,12 +14,11 @@ export default function Home() {
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
-      <div className={styles.mainContainer}>
-
-        <motion.div className={styles.banner}
-            initial={{ opacity: 0}}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.9 }}>  
+      <motion.div className={styles.mainContainer}
+          initial={{ opacity: 0}}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.9 }}>
+        <div className={styles.banner}>  
 
             <h1>Medical Consultation Made Online.</h1>
 
@@ -32,16 +29,12 @@ export default function Home() {
               <Link className={styles.doctorBtn} href="/login/doctor">Login as Doctor</Link>
             </div>
 
-        </motion.div>
+        </div>
 
-        <motion.div className={styles.imageContainer}
-            initial={{ opacity: 0}}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.7 }}> 
-          <Image src={doctor} alt='Doctor'/>
-        </motion.div>
+        <div className={styles.imageContainer}> 
+        </div>
 
-      </div>
+      </motion.div>
     </>
   );
 }

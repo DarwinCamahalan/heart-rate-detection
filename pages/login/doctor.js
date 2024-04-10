@@ -3,10 +3,12 @@ import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { motion } from "framer-motion"
 import { useRouter } from 'next/router'
+import Image from 'next/image';
 import Head from 'next/head';
 import styles from './login.module.scss';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
+import doctorImageBG from '../../public/doctorBG.png'
 
 const DoctorLogin = () => {
   const [email, setEmail] = useState('');
@@ -75,6 +77,7 @@ const DoctorLogin = () => {
       </Head>
 
       <div className={styles.mainContainer}>
+      <Image className={styles.doctorBG} src={doctorImageBG} alt='image background'/>
         <div className={styles.loginForm}>
           <h2>Doctor Login</h2>
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={handleKeyDown}/>

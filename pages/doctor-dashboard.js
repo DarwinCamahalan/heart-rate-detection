@@ -27,6 +27,11 @@ const DoctorDashboard = () => {
   const [availableDates, setAvailableDates] = useState([]);
   const [timeRange, setTimeRange] = useState('daily');
 
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 8, //customize the default page size
+  });
+
   useEffect(() => {
     const fetchPatientsData = async () => {
       try {
@@ -355,9 +360,6 @@ const calculateMonthlyData = () => {
     }
 };
 
-
-  
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -365,6 +367,7 @@ const calculateMonthlyData = () => {
   const table = useMaterialReactTable({
     columns,
     data: patientsData,
+    enableDensityToggle: false,
     muiTableBodyRowProps: ({ row }) => ({
       onClick: () => handleRowClick(row),
       sx: {
@@ -376,10 +379,20 @@ const calculateMonthlyData = () => {
         borderRadius: '16px',
         paddingLeft: '20px',
         paddingRight: '20px',
-        height: '100%',
-        border: '1px solid rgb(219, 219, 219)'
+        border: '1px solid rgb(219, 219, 219)',
       },
     },
+    initialState: { // REMOVE THIS IF YOU WAN TO SORT BY NEW PATIENT DATA, from here
+      sorting: [
+        {
+          id: 'firstName', 
+          desc: true,
+        },
+      ],
+    }, // to here
+
+    onPaginationChange: setPagination,
+    state: { pagination }, 
   });
 
   let latestDate = null;
@@ -404,7 +417,9 @@ const calculateMonthlyData = () => {
       </Head>
 
       <div className={styles.dashboardLayout}>
-        <div className={styles.sideBar}></div>
+        <div className={styles.sideBar}>
+          <span>All Patient Information</span>
+        </div>
         <div className={styles.tableContainer}>
           <MaterialReactTable table={table} />
         </div>

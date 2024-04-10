@@ -179,8 +179,9 @@ const ScheduleCheckup = ({ showCheckup, setShowCheckup }) => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.9 }}
               disabled={!scheduleApproved} 
+              style={{backgroundColor: `${scheduleApproved == false ? 'green' : null}`, cursor: `${scheduleApproved == false ? 'no-drop' : null}`}}
             >
-              Submit
+              {scheduleApproved == false ? 'Submitted': 'Submit'}
             </motion.button>
 
           </div>

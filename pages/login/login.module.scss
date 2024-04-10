@@ -1,9 +1,23 @@
 .mainContainer{
     width: 100%;
-    height: 90.85vh;
+    height: 90.7vh;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .patientBG{
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        z-index: -1;
+    }
+
+    .doctorBG{
+        position: absolute;
+        right: -5px;
+        bottom: 0;
+        z-index: -1;
+    }
 
     .loginForm{
         display: flex;
