@@ -120,8 +120,8 @@ export default function HeartRate() {
         ) : (
           <div className={styles.showCard}>
             <div className={styles.videoContainer}>
-              <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" width="600" height="500" frameBorder="0"></iframe>
-              <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" width="320" height="240" frameBorder="0"></iframe>
+              <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" scrolling="no" width="600" height="500" frameBorder="0"></iframe>
+              <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" scrolling="no" width="320" height="240" frameBorder="0"></iframe>
             </div>
 
             <div className={styles.bpmCounter}>
