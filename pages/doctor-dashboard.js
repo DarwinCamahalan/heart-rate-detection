@@ -29,7 +29,7 @@ const DoctorDashboard = () => {
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 8, //customize the default page size
+    pageSize: 10, //customize the default page size
   });
 
   useEffect(() => {
