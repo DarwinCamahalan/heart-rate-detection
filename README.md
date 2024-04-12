@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Medical Consultation
+A Computer Vision Web Application project thats detects person Heart Rate Per Minute (BPM) for medical consultation data grathering using Eulerian Magnification and OpenCV and for the front end using Next JS
 
-## Getting Started
+---
 
-First, run the development server:
+### Heart Rate Detection
+![test](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/7c3e21d6-0e67-4571-91c4-b2140287196b)
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+### Home Page
+![1](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/d38c5452-e5c1-4b2e-a565-dd5351233621)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Login Page
+![2](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/ca741691-3593-4d06-bc9a-8b1afa31dd99)
+![3](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/3b709f72-ca14-49b6-b721-5052bf33b2f8)
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+### Patient Dashnoard
+![4](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/fb41866e-790b-4512-a264-bda43083645f)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+### Schedule Checkup
+![5](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/16a1e9b5-fb95-434a-92b9-631636873829)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Display All Graphs
+![6](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/100e238d-45f6-47c9-aedb-e4d6b91cb269)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### All BPM Records
+![7](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/7c903239-f4f9-49a6-a0f4-9e05fd42a685)
 
-## Learn More
+### Doctor Dashboard
+![8](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/7bcd1211-fa61-4036-bf48-9ea69d01108d)
 
-To learn more about Next.js, take a look at the following resources:
+### Patient Information in Doctor Dashboard (Approved Checkup)
+![9](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/4cdb35d3-c905-4be3-bfeb-742e452d8451)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## High BPM Patient Warning
+![10](https://github.com/DarwinCamahalan/heart-rate-detection/assets/120079195/779bf3c6-eb6c-41c7-970a-ae690d381483)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
