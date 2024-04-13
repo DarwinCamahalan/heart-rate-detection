@@ -6,7 +6,8 @@
     justify-content: space-evenly;
 
     background-image: url('../public/homepage-background.png');
-    object-fit: contain;
+    object-fit: fill;
+    background-position: center;
     background-repeat: no-repeat;
 
     .banner{
