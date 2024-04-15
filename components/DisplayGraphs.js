@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Chart, LinearScale, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
-import { Scatter } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import Cookies from 'js-cookie';
 import moment from 'moment';
 import 'chartjs-adapter-moment';
@@ -84,29 +84,36 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
     };
 
     const renderDailyGraph = () => {
+        // Sort the data by time
+        const sortedData = Object.entries(bpmData[selectedDate])
+            .map(([time, { bpmValue }]) => ({
+                x: moment(time, 'HH:mm:ss').toDate(),
+                y: bpmValue || 0,
+            }))
+            .sort((a, b) => a.x - b.x); // Sort by time
+    
         return (
-            <Scatter
+            <Line
                 style={{ padding: '10px 20px' }}
                 data={{
                     datasets: [
                         {
                             label: 'Daily BPM Data',
-                            data: Object.entries(bpmData[selectedDate]).map(([time, { bpmValue }]) => ({
-                                x: moment(time, 'HH:mm:ss').toDate(),
-                                y: bpmValue || 0,
-                            })),
+                            data: sortedData,
                             pointRadius: 6,
+                            borderColor: '#bfbfbf', // Line color
+                            borderWidth: 1, // Line width
                             pointBackgroundColor: ctx => {
                                 const value = ctx.dataset.data[ctx.dataIndex].y;
                                 if (value >= 0 && value <= 40) {
                                     return '#eefa05';
-                                  } else if (value >= 41 && value <= 70) {
-                                      return '#2afa05';
-                                  } else if (value >= 71 && value <= 90) {
-                                      return '#fc0303';
-                                  } else {
-                                      return '#0452ce';
-                                  }
+                                } else if (value >= 41 && value <= 70) {
+                                    return '#2afa05';
+                                } else if (value >= 71 && value <= 90) {
+                                    return '#fc0303';
+                                } else {
+                                    return '#0452ce';
+                                }
                             },
                         },
                     ],
@@ -134,6 +141,7 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
             />
         );
     };
+    
 
     const renderWeeklyGraph = () => {
         // Logic to calculate weekly average BPM
@@ -141,7 +149,7 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
     
         if (weeklyData) {
             return (
-                <Scatter
+                <Line
                     style={{ padding: '10px 20px' }}
                     data={{
                         datasets: [
@@ -156,6 +164,8 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                                                           '#0452ce'
                                 })),
                                 pointRadius: 6,
+                                borderColor: '#bfbfbf', // Line color
+                                borderWidth: 1, // Line width
                                 pointBackgroundColor: ctx => ctx.dataset.data.map(point => point.color)
                             },
                         ],
@@ -193,7 +203,7 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
     
         if (monthlyData.length > 0) {
             return (
-                <Scatter
+                <Line
                     style={{ padding: '10px 20px' }}
                     data={{
                         datasets: [
@@ -208,6 +218,8 @@ const DisplayGraphs = ({ showGraphs, setShowGraphs }) => {
                                                           '#0452ce'
                                 })),
                                 pointRadius: 6,
+                                borderColor: '#bfbfbf', // Line color
+                                borderWidth: 1, // Line width
                                 pointBackgroundColor: ctx => ctx.dataset.data.map(point => point.color)
                             },
                         ],
