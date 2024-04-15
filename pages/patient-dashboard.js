@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, getDocs, query, where, doc, getDoc, setDoc } from 'firebase/firestore';
-import { Chart, LinearScale, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
-Chart.register(LinearScale, PointElement, Tooltip, Legend, TimeScale);
-import { Scatter } from 'react-chartjs-2';
-
+import { Chart, LineController, LineElement, CategoryScale } from 'chart.js';
+import { Line } from 'react-chartjs-2';
 import { motion } from "framer-motion"
 import Cookies from 'js-cookie';
 import Link from 'next/link';
@@ -15,6 +13,8 @@ import heartLogo from '../public/bpm-card-image.png';
 import tempImage from '../public/tempImage.jpg';
 import moment from 'moment';
 import 'chartjs-adapter-moment';
+
+Chart.register(LineController, LineElement, CategoryScale);
 
 const PatientDashboard = () => {
   const [fullName, setFullName] = useState('');
@@ -83,12 +83,11 @@ const PatientDashboard = () => {
   useEffect(() => {
     if (selectedDate && bpmData[selectedDate]) {
       const latestEntry = Object.entries(bpmData[selectedDate])
-        .sort(([timeA], [timeB]) => moment(timeB, 'HH:mm:ss').diff(moment(timeA, 'HH:mm:ss')))
-        .find(([, { bpmValue }]) => bpmValue !== undefined);
+        .sort(([timeA], [timeB]) => moment(timeA, 'HH:mm:ss').diff(moment(timeB, 'HH:mm:ss')));
   
-      if (latestEntry) {
-        setUserBpm(latestEntry[1].bpmValue);
-        setUserBpmTime(moment(latestEntry[0], 'HH:mm:ss').format('h:mm A'));
+      if (latestEntry.length > 0) {
+        setUserBpm(latestEntry[0][1].bpmValue);
+        setUserBpmTime(moment(latestEntry[0][0], 'HH:mm:ss').format('h:mm A'));
       } else {
         setUserBpm(null);
         setUserBpmTime('');
@@ -101,17 +100,20 @@ const PatientDashboard = () => {
   
   useEffect(() => {
     if (selectedDate && bpmData[selectedDate]) {
-        const entries = Object.values(bpmData[selectedDate]);
-        const totalBpm = entries.reduce((acc, entry) => acc + entry.bpmValue, 0);
-        const avgBpm = totalBpm / entries.length;
-        const roundedAvgBpm = parseFloat(avgBpm.toFixed(1)); // Convert to number with one decimal place
-        setAverageBpm(roundedAvgBpm);
-        sendAverageBpmToFirestore(selectedDate, roundedAvgBpm); // Pass the roundedAvgBpm to the function
+        const entries = Object.entries(bpmData[selectedDate]);
+        if (entries.length > 0) {
+          const totalBpm = entries.reduce((acc, entry) => acc + entry[1].bpmValue, 0);
+          const avgBpm = totalBpm / entries.length;
+          const roundedAvgBpm = parseFloat(avgBpm.toFixed(1)); // Convert to number with one decimal place
+          setAverageBpm(roundedAvgBpm);
+          sendAverageBpmToFirestore(selectedDate, roundedAvgBpm); // Pass the roundedAvgBpm to the function
+        } else {
+          setAverageBpm(null);
+        }
     } else {
         setAverageBpm(null);
     }
-}, [selectedDate, bpmData, sendAverageBpmToFirestore]);
-
+  }, [selectedDate, bpmData, sendAverageBpmToFirestore]);
 
   const handleDateChange = event => {
     setSelectedDate(event.target.value);
@@ -178,16 +180,18 @@ const PatientDashboard = () => {
                   ))}
                 </select>
                 {selectedDate && bpmData[selectedDate] !== undefined ? (
-                  <Scatter
+                  <Line
                     data={{
                       datasets: [
                         {
                           label: 'Daily BPM Data',
-                          data: Object.entries(bpmData[selectedDate]).map(([time, { bpmValue }]) => ({
+                          data: Object.entries(bpmData[selectedDate]).sort(([timeA], [timeB]) => moment(timeA, 'HH:mm:ss').diff(moment(timeB, 'HH:mm:ss'))).map(([time, { bpmValue }]) => ({
                             x: moment(time, 'HH:mm:ss').toDate(),
                             y: bpmValue || 0,
                           })),
                           pointRadius: 6,
+                          borderColor: '#bfbfbf', // Line color
+                          borderWidth: 1, // Line width
                           pointBackgroundColor: ctx => {
                             const value = ctx.dataset.data[ctx.dataIndex].y;
                             if (value >= 0 && value <= 40) {
