@@ -145,87 +145,8 @@ def bpm_detection():
                     cv2.addWeighted(overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
                     cv2.putText(frame, f"BPM: {round(bpmBuffer.mean())}", (5, 23), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
                     
-                    # Emit BPM value over WebSocket
-                    emit_bpm(bpmBuffer.mean(), bufferIndex)
-
-                    
-            ret, jpeg = cv2.imencode('.jpg', frame)
-            frame_bytes = jpeg.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-
-    return Response(generate(bufferIndex, bpmBufferIndex), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-@app.route('/bpm_detection2')
-def bpm_detection2():
-    def generate(bufferIndex, bpmBufferIndex):
-        while True:
-            ret, frame = webcam.read()
-            if not ret:
-                break
-
-            detectionFrame = frame[videoHeight//2:realHeight-videoHeight//2, videoWidth//2:realWidth-videoWidth//2, :]
-            
-            face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-            
-            # Perform face detection
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
-            
-            # Eyes detected, proceed with normal BPM detection
-            videoGauss[bufferIndex] = buildGauss(detectionFrame, levels+1)[levels]
-            fourierTransform = np.fft.fft(videoGauss, axis=0)
-            
-            # Bandpass Filter
-            fourierTransform[mask == False] = 0
-
-            # Grab a Pulse
-            if bufferIndex % bpmCalculationFrequency == 0:
-                for buf in range(bufferSize):
-                    fourierTransformAvg[buf] = np.real(fourierTransform[buf]).mean()
-                hz = frequencies[np.argmax(fourierTransformAvg)]
-                bpm = 60.0 * hz
-                bpmBuffer[bpmBufferIndex] = bpm
-                bpmBufferIndex = (bpmBufferIndex + 1) % bpmBufferSize
-
-            # Amplify
-            filtered = np.real(np.fft.ifft(fourierTransform, axis=0))
-            filtered = filtered * alpha
-
-            # Reconstruct Resulting Frame
-            filteredFrame = reconstructFrame(filtered, bufferIndex, levels)
-            outputFrame = detectionFrame + filteredFrame
-            outputFrame = cv2.convertScaleAbs(outputFrame)
-
-            bufferIndex = (bufferIndex + 1) % bufferSize
-            
-            frame[videoHeight//2:realHeight-videoHeight//2, videoWidth//2:realWidth-videoWidth//2, :] = outputFrame
-            cv2.rectangle(frame, (videoWidth//2 , videoHeight//2), (realWidth-videoWidth//2, realHeight-videoHeight//2), boxColor, boxWeight)
-
-            if len(faces) == 0:
-                # No eyes detected, set bpm to 0 and font color to red
-                bpm = 0
-                bufferIndex = 0
-                # Create a transparent red rectangle
-                overlay = frame.copy()  # Create a copy of the frame
-                cv2.rectangle(overlay, (0, 5), (143, 30), (0, 0, 255), -1)  # Draw the red rectangle on the copy
-
-                # Blend the overlay with the frame
-                cv2.addWeighted(overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
-                cv2.putText(frame, f"NO FACE FOUND", (5, 23), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-                emit_bpm(bpm, bufferIndex)
-            else:
-                if bufferIndex >= bpmBufferSize:
-                    # Create a transparent green rectangle
-                    overlay = frame.copy()  # Create a copy of the frame
-                    cv2.rectangle(overlay, (0, 5), (115, 30), (0, 255, 0), -1)  # Draw the red rectangle on the copy
-
-                    # Blend the overlay with the frame
-                    cv2.addWeighted(overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
-                    cv2.putText(frame, f"BPM: {round(bpmBuffer.mean())}", (5, 23), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-                    
             # Resize the frame to 600x500
-            resized_frame = cv2.resize(frame, (600, 500))
+            resized_frame = cv2.resize(frame, (190, 130))
                     
             # Emit BPM value over WebSocket
             emit_bpm(bpmBuffer.mean(), bufferIndex)
