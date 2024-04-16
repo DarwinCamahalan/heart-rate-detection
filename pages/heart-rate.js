@@ -18,6 +18,7 @@ export default function HeartRate() {
   const [bufferIndex, setBufferIndex] = useState(0);
   const [showFinalBpm, setShowFinalBpm] = useState(false);
   const [patientData, setPatientData] = useState(null);
+  const [toggleCamera, setToggleCamera] = useState(false);
 
   useEffect(() => {
     const socket = io('http://localhost:5000');
@@ -26,7 +27,7 @@ export default function HeartRate() {
       setBpm(bpm);
       setBufferIndex(bufferIndex);
 
-      if (bufferIndex === 149) {
+      if (bufferIndex === 149 && bpm != 0) {
         setShowFinalBpm(true);
         setFinalBpm(bpm);
       }
@@ -120,26 +121,51 @@ export default function HeartRate() {
         ) : (
           <div className={styles.showCard}>
             <div className={styles.videoContainer}>
-              <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" scrolling="no" width="600" height="500" frameBorder="0"></iframe>
-              <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" scrolling="no" width="320" height="240" frameBorder="0"></iframe>
+              {toggleCamera  == false ? 
+              <div style={{display: `${toggleCamera == false ? 'block' : 'none'}`}} >
+                <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" scrolling="no" width="600" height="500" frameBorder="0"></iframe>
+                <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" scrolling="no" width="320" height="240" frameBorder="0"></iframe>
+              </div>
+            :
+                <iframe style={{display: `${toggleCamera == true ? 'block' : 'none'}`}} className={styles.bpmVideo2} src="http://127.0.0.1:5000/bpm_detection2" scrolling="no" width="600" height="500" frameBorder="0"></iframe>}
+           
             </div>
 
-            <div className={styles.bpmCounter}>
-              <CircularProgressbarWithChildren className={styles.progressBar} value={bufferIndex}
-                styles={buildStyles({
-                  strokeLinecap: 'butt',
-                  pathTransitionDuration: 0.1,
-                  transition: 'stroke-dashoffset 0.5s ease 0s',
-                  transform: 'rotate(0.25turn)',
-                  transformOrigin: 'center center',
-                  pathColor: `rgba(222, 0, 56, ${bufferIndex / 100})`,
-                  trailColor: '#ffebeb',
-                })}
-              >
-                <Image src={hearBeat} alt='Heart Beat' />
-                <span>{bpm}</span>
-              </CircularProgressbarWithChildren>
+            <div className={styles.sideInfo}>
+              <div className={styles.bpmCounter}>
+                <CircularProgressbarWithChildren className={styles.progressBar} value={bufferIndex}
+                  styles={buildStyles({
+                    strokeLinecap: 'butt',
+                    pathTransitionDuration: 0.1,
+                    transition: 'stroke-dashoffset 0.5s ease 0s',
+                    transform: 'rotate(0.25turn)',
+                    transformOrigin: 'center center',
+                    pathColor: `rgba(222, 0, 56, ${bufferIndex / 100})`,
+                    trailColor: '#ffebeb',
+                  })}
+                >
+                  <Image src={hearBeat} alt='Heart Beat' />
+                  <span>{bpm}</span>
+                </CircularProgressbarWithChildren>
+              </div>
+
+              <div className={styles.btnContainer}>
+                <p>Toggle Camera</p>
+
+                <div className={styles.toggleContainer}>
+                  
+                  <div className={`${toggleCamera == false ? styles.toggleBtn : styles.toggleBtn2}`} onClick={(()=>{
+                    setToggleCamera(!toggleCamera)
+                    })}>
+                    <div className={styles.circle}></div>
+                  </div>
+
+                  <span style={{color: `${toggleCamera == false ? 'rgb(222, 0, 56)' : 'rgb(22, 222, 0)'}`}}>{toggleCamera == false ? 'Double': 'Single'}</span>
+                </div>
+
+              </div>
             </div>
+
           </div>
         )}
       </div>
