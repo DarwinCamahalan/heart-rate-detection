@@ -145,12 +145,12 @@ def bpm_detection():
                     cv2.addWeighted(overlay, alphaColor, frame, 1 - alphaColor, 0, frame)
                     cv2.putText(frame, f"BPM: {round(bpmBuffer.mean())}", (5, 23), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
                     
-            # Resize the frame to 600x500
-            resized_frame = cv2.resize(frame, (190, 130))
-                    
-            # Emit BPM value over WebSocket
-            emit_bpm(bpmBuffer.mean(), bufferIndex)
+                    # Emit BPM value over WebSocket
+                    emit_bpm(bpmBuffer.mean(), bufferIndex)
 
+            # Resize the frame to 600x500
+            resized_frame = cv2.resize(frame, (190, 150))
+                    
             ret, jpeg = cv2.imencode('.jpg', resized_frame)
             frame_bytes = jpeg.tobytes()
             yield (b'--frame\r\n'

@@ -26,7 +26,7 @@ export default function HeartRate() {
       setBpm(bpm);
       setBufferIndex(bufferIndex);
 
-      if (bufferIndex === 149) {
+      if (bufferIndex === 149 && bpm != 0 && !(bpm > 100)) {
         setShowFinalBpm(true);
         setFinalBpm(bpm);
       }
@@ -113,12 +113,19 @@ export default function HeartRate() {
               <h5>{finalBpm}</h5>
               <div className={styles.buttons}>
                 <button onClick={handleSubmit}><span>&#128505;</span> Submit</button>
-                <button onClick={() => { window.location.href = '/heart-rate'; }}> <span>&#120;</span> Retry</button>
+                <button onClick={() => { 
+                  // window.location.href = '/heart-rate';
+                  setShowFinalBpm(false)
+                  setBpm(0)
+                  setBufferIndex(0)
+                  setFinalBpm(0)
+                  }}> <span>&#120;</span> Retry</button>
               </div>
             </motion.div>
           </div>
         ) : (
           <div className={styles.showCard}>
+
             <div className={styles.videoContainer}>
               <iframe className={styles.faceVideo} src="http://127.0.0.1:5000/face_detection" scrolling="no" width="600" height="500" frameBorder="0"></iframe>
               <iframe className={styles.bpmVideo} src="http://127.0.0.1:5000/bpm_detection" scrolling="no" width="190" height="130" frameBorder="0"></iframe>
